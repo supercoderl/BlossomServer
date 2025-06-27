@@ -1,0 +1,20 @@
+﻿﻿syntax = "proto3";
+
+option csharp_namespace = "BlossomServer.Proto.Users";
+
+message GrpcUser {
+  string id = 1;
+  string firstName = 2;
+  string lastName = 3;
+  string email = 4;
+  string phone = 5;
+  string deletedAt = 6;
+}
+
+message GetUsersByIdsResult {
+  repeated GrpcUser users = 1;
+}
+
+message GetUsersByIdsRequest {
+  repeated string ids = 1;
+}

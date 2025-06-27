@@ -1,0 +1,113 @@
+﻿using BlossomServer.Domain.Enums;
+using System;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations.Schema;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BlossomServer.Domain.Entities
+{
+    public class User : Entity<Guid>
+    {
+        public string Password { get; private set; }
+        public string FirstName { get; private set; }
+        public string LastName { get; private set; }
+        public string Email { get; private set; }
+        public string PhoneNumber { get; private set; }
+        public string AvatarUrl { get; private set; }
+        public Gender Gender { get; private set; }
+        public DateOnly DateOfBirth { get; private set; }
+        public UserRole Role { get; private set; }
+        public UserStatus Status { get; private set; }
+        public DateTimeOffset? LastLoggedinDate { get; private set; }
+
+        public string FullName => $"{FirstName}, {LastName}";
+
+        [InverseProperty("User")]
+        public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
+
+        [InverseProperty("User")]
+        public virtual ICollection<Review> Reviews { get; set; } = new List<Review>();
+
+        [InverseProperty("User")]
+        public virtual Technician? Technician { get; set; }
+
+        [InverseProperty("User")]
+        public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
+
+        public User(
+            Guid id, 
+            string password, 
+            string firstName,
+            string lastName,
+            string email, 
+            string phoneNumber,
+            string avatarUrl,
+            Gender gender,
+            DateOnly dateOfBirth,
+            UserRole role,
+            UserStatus status = UserStatus.Active
+        ) : base(id)
+        {
+            Password = password;
+            FirstName = firstName;
+            LastName = lastName;
+            Email = email;
+            PhoneNumber = phoneNumber;
+            AvatarUrl = avatarUrl;
+            Gender = gender;
+            DateOfBirth = dateOfBirth;
+            Role = role;
+            Status = status;
+        }
+
+        public void SetPassword(string password)
+        {
+            Password = password;
+        }
+        
+        public void SetFirstName(string firstName)
+        {
+            FirstName = firstName;
+        }
+
+        public void SetLastName(string lastName)
+        {
+            LastName = lastName;
+        }
+
+        public void SetEmail(string email)
+        {
+            Email = email;
+        }
+
+        public void SetPhoneNumber(string phoneNumber)
+        {
+            PhoneNumber = phoneNumber;
+        }
+
+        public void SetLastLoggedIn(DateTimeOffset? lastLoggedinDate)
+        {
+            LastLoggedinDate = lastLoggedinDate;
+        }
+
+        public void SetInactive()
+        {
+            Status = UserStatus.Inactive;
+        }
+
+        public void SetActive()
+        {
+            Status = UserStatus.Active;
+        }
+
+        public void SetAvatarUrl(string avatarUrl) { AvatarUrl = avatarUrl; }
+
+        public void SetGender(Gender gender) { Gender = gender; }
+
+        public void SetDateOfBirth(DateOnly dateOfBirth) { DateOfBirth = dateOfBirth; }
+
+        public void SetRole(UserRole role) { Role = role; }
+    }
+}
