@@ -98,7 +98,7 @@ builder.Services.AddMassTransit(x =>
             return settings;
         });
 
-        cfg.Host(rabbitConfiguration.Host, (ushort)rabbitConfiguration.Port, "/", h => {
+        cfg.Host(rabbitConfiguration.Host, (ushort)rabbitConfiguration.Port, rabbitConfiguration.VirtualHost, h => {
             h.Username(rabbitConfiguration.Username);
             h.Password(rabbitConfiguration.Password);
         });
