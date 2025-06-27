@@ -1,9 +1,0 @@
-﻿﻿syntax = "proto3";
-
-option csharp_namespace = "BlossomServer.Proto.Users";
-
-import "Users/Models.proto";
-
-service UsersApi {
-  rpc GetByIds(GetUsersByIdsRequest) returns (GetUsersByIdsResult);
-}
