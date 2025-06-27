@@ -29,6 +29,7 @@ namespace BlossomServer.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [SwaggerOperation("Get a list of all categories")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<CategoryViewModel>>))]
         public async Task<IActionResult> GetAllCategoriesAsync(
