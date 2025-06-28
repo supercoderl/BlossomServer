@@ -33,6 +33,7 @@ namespace BlossomServer.Domain.Entities
             Name = name;
             IsActive = isActive;
             Icon = icon;
+            Url = url;
             Priority = priority;
             CreatedAt = TimeZoneHelper.GetLocalTimeNow();
         }
