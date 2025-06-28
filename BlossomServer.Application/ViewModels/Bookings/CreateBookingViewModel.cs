@@ -8,10 +8,13 @@ namespace BlossomServer.Application.ViewModels.Bookings
 {
     public sealed record CreateBookingViewModel
     (
-        Guid CustomerId,
+        Guid? CustomerId,
         Guid? TechnicianId,
         DateTime ScheduleTime,
         decimal TotalPrice,
-        string? Note
+        string? Note,
+        string? GuestName,
+        string? GuestPhone,
+        string? GuestEmail
     );
 }

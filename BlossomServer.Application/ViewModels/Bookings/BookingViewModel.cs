@@ -11,12 +11,15 @@ namespace BlossomServer.Application.ViewModels.Bookings
     public sealed class BookingViewModel
     {
         public Guid Id { get; set; }
-        public Guid CustomerId { get; set; }
+        public Guid? CustomerId { get; set; }
         public Guid? TechnicianId { get; set; }
         public DateTime ScheduleTime { get; set; }
         public decimal TotalPrice { get; set; }
         public BookingStatus Status { get; set; }
         public string? Note { get; set; }
+        public string? GuestName { get; set; }
+        public string? GuestPhone { get; set; }
+        public string? GuestEmail { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
 
@@ -31,6 +34,9 @@ namespace BlossomServer.Application.ViewModels.Bookings
                 TotalPrice = booking.TotalPrice,
                 Status = booking.Status,
                 Note = booking.Note,
+                GuestName = booking.GuestName,
+                GuestPhone = booking.GuestPhone,
+                GuestEmail = booking.GuestEmail,
                 CreatedAt = booking.CreatedAt,
                 UpdatedAt = booking.UpdatedAt
             };

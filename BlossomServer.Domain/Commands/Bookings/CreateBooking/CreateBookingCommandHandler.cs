@@ -36,7 +36,10 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
                 request.ScheduleTime,
                 request.TotalPrice,
                 Enums.BookingStatus.Pending,
-                request.Note
+                request.Note,
+                request.GuestName,
+                request.GuestPhone,
+                request.GuestEmail
             );
 
             _bookingRepository.Add(booking);

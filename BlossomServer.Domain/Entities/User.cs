@@ -36,6 +36,9 @@ namespace BlossomServer.Domain.Entities
         [InverseProperty("User")]
         public virtual ICollection<RefreshToken> RefreshTokens { get; set; } = new List<RefreshToken>();
 
+        [InverseProperty("Customer")]
+        public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
+
         public User(
             Guid id, 
             string password, 

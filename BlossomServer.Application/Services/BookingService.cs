@@ -28,7 +28,10 @@ namespace BlossomServer.Application.Services
                 booking.TechnicianId,
                 booking.ScheduleTime,
                 booking.TotalPrice,
-                booking.Note
+                booking.Note,
+                booking.GuestName,
+                booking.GuestPhone,
+                booking.GuestEmail
             ));
 
             return bookingId;

@@ -15,7 +15,7 @@ namespace BlossomServer.Infrastructure.Configuration
         {
             builder.HasKey(b => b.Id);
 
-            builder.Property(b => b.CustomerId).IsRequired();
+            builder.Property(b => b.CustomerId);
 
             builder.Property(b => b.TechnicianId);
 
@@ -26,6 +26,12 @@ namespace BlossomServer.Infrastructure.Configuration
             builder.Property(b => b.Status).IsRequired().HasConversion<string>();
 
             builder.Property(b => b.Note);
+
+            builder.Property(b => b.GuestName);
+
+            builder.Property(b => b.GuestPhone);
+
+            builder.Property(b => b.GuestEmail);
 
             builder.Property(b => b.CreatedAt).IsRequired();
 

@@ -49,6 +49,9 @@ namespace BlossomServer.Domain.Commands.Bookings.UpdateBooking
             booking.SetTotalPrice(request.TotalPrice);
             booking.SetStatus(request.Status);
             booking.SetNote(request.Note);
+            booking.SetGuestName(request.GuestName);
+            booking.SetGuestPhone(request.GuestPhone);
+            booking.SetGuestEmail(request.GuestEmail);
             booking.SetUpdatedAt();
 
             _bookingRepository.Update(booking);

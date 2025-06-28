@@ -13,20 +13,26 @@ namespace BlossomServer.Domain.Commands.Bookings.UpdateBooking
         private static readonly UpdateBookingCommandValidation s_validation = new();
 
         public Guid BookingId { get; }
-        public Guid CustomerId { get; }
+        public Guid? CustomerId { get; }
         public Guid? TechnicianId { get; }
         public DateTime ScheduleTime { get; }
         public decimal TotalPrice { get; }
         public string? Note { get; }
+        public string? GuestName { get; }
+        public string? GuestPhone { get; }
+        public string? GuestEmail { get; }
         public BookingStatus Status { get; }
 
         public UpdateBookingCommand(
             Guid bookingId,
-            Guid customerId,
+            Guid? customerId,
             Guid? technicianId,
             DateTime scheduleTime,
             decimal totalPrice,
             string? note,
+            string? guestName,
+            string? guestPhone,
+            string? guestEmail,
             BookingStatus status
         ) : base(Guid.NewGuid())
         {
@@ -36,6 +42,9 @@ namespace BlossomServer.Domain.Commands.Bookings.UpdateBooking
             ScheduleTime = scheduleTime;
             TotalPrice = totalPrice;
             Note = note;
+            GuestName = guestName;
+            GuestPhone = guestPhone;
+            GuestEmail = guestEmail;
             Status = status;
         }
 
