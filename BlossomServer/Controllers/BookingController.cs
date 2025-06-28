@@ -47,6 +47,7 @@ namespace BlossomServer.Controllers
         }
 
         [HttpGet("{id}")]
+        [AllowAnonymous]
         [SwaggerOperation("Get a booking by id")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<BookingViewModel>))]
         public async Task<IActionResult> GetBookingByIdAsync([FromRoute] Guid id)
@@ -56,6 +57,7 @@ namespace BlossomServer.Controllers
         }
 
         [HttpPost]
+        [AllowAnonymous]
         [SwaggerOperation("Create a new booking")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<Guid>))]
         public async Task<IActionResult> CreateBookingAsync([FromBody] CreateBookingViewModel viewModel)
