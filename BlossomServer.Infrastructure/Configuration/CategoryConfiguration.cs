@@ -19,6 +19,10 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(c => c.IsActive).IsRequired();
 
+            builder.Property(c => c.Icon).IsRequired();
+
+            builder.Property(c => c.Url).IsRequired();
+
             builder.Property(c => c.Priority).IsRequired();
 
             builder.Property(c => c.CreatedAt).IsRequired();

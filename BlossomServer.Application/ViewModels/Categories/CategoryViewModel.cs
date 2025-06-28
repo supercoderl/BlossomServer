@@ -12,6 +12,8 @@ namespace BlossomServer.Application.ViewModels.Categories
         public Guid Id { get; set; }
         public string Name { get; set; } = string.Empty;
         public bool IsActive { get; set; }
+        public string Icon { get; set; } = string.Empty;
+        public string Url { get; set; } = string.Empty;
         public int Priority { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
@@ -23,6 +25,8 @@ namespace BlossomServer.Application.ViewModels.Categories
                 Id = category.Id,
                 Name = category.Name,
                 IsActive = category.IsActive,
+                Icon = category.Icon,
+                Url = category.Url, 
                 Priority = category.Priority,
                 CreatedAt = category.CreatedAt,
                 UpdatedAt = category.UpdatedAt

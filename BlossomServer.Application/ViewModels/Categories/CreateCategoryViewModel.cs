@@ -9,6 +9,8 @@ namespace BlossomServer.Application.ViewModels.Categories
     public sealed record CreateCategoryViewModel
     (
         string Name,
-        int Priority
+        int Priority,
+        string Icon,
+        string Url
     );
 }

@@ -33,6 +33,8 @@ namespace BlossomServer.Domain.Commands.Categories.CreateCategory
                 request.CategoryId,
                 request.Name,
                 request.IsActive,
+                request.Icon,
+                request.Url,
                 request.Priority
             );
 

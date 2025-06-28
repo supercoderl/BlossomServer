@@ -45,6 +45,8 @@ namespace BlossomServer.Domain.Commands.Categories.UpdateCategory
             category.SetName(request.Name);
             category.SetIsActive(request.IsActive);
             category.SetPriority(request.Priority);
+            category.SetIcon(request.Icon);
+            category.SetUrl(request.Url);
             category.SetUpdatedAt();
 
             _categoryRepository.Update(category);

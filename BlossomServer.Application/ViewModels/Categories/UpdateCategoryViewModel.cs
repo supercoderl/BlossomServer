@@ -11,6 +11,8 @@ namespace BlossomServer.Application.ViewModels.Categories
         Guid CategoryId,
         string Name,
         bool IsActive,
+        string Icon,
+        string Url,
         int Priority
     );
 }

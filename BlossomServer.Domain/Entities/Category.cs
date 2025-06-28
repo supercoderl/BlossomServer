@@ -13,6 +13,8 @@ namespace BlossomServer.Domain.Entities
         public string Name { get; private set; }
         public bool IsActive { get; private set; }
         public int Priority { get; private set; }
+        public string Icon { get; private set; }
+        public string Url { get; private set; }
         public DateTime CreatedAt { get; private set; }
         public DateTime? UpdatedAt { get; private set; }
 
@@ -23,17 +25,22 @@ namespace BlossomServer.Domain.Entities
             Guid id,
             string name,
             bool isActive,
+            string icon,
+            string url,
             int priority
         ) : base(id)
         {
             Name = name;
             IsActive = isActive;
+            Icon = icon;
             Priority = priority;
             CreatedAt = TimeZoneHelper.GetLocalTimeNow();
         }
 
         public void SetName( string name ) { Name = name; }
         public void SetIsActive( bool isActive ) { IsActive = isActive; }
+        public void SetIcon( string icon ) { Icon = icon; }
+        public void SetUrl ( string url ) { Url = url; }
         public void SetPriority( int priority ) { Priority = priority; }
         public void SetUpdatedAt() { UpdatedAt = TimeZoneHelper.GetLocalTimeNow(); }
     }

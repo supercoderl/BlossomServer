@@ -27,6 +27,8 @@ namespace BlossomServer.Application.Services
             await _bus.SendCommandAsync(new CreateCategoryCommand(
                 categoryId,
                 category.Name,
+                category.Icon,
+                category.Url,
                 true,
                 category.Priority
             ));
@@ -55,6 +57,8 @@ namespace BlossomServer.Application.Services
                 category.CategoryId,
                 category.Name,
                 category.IsActive,
+                category.Icon,
+                category.Url,
                 category.Priority
             ));
         }

@@ -4,6 +4,7 @@ using BlossomServer.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlossomServer.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250628020915_Update-Category-Icon")]
+    partial class UpdateCategoryIcon
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -126,10 +129,6 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<DateTime?>("UpdatedAt")
                         .HasColumnType("datetime2");
-
-                    b.Property<string>("Url")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -496,7 +495,7 @@ namespace BlossomServer.Infrastructure.Migrations
                             FirstName = "Admin",
                             Gender = 0,
                             LastName = "Super",
-                            Password = "$2a$11$OCQncslrC7U0h224ZWQqCeBhtB.KjBSVFRDOuraBROflRQH2dzv1i",
+                            Password = "$2a$11$RaQhUKXXEoLvm8NL14F2X.RVPqmopnwPyDDxtR6R0gECwrfxiskqa",
                             PhoneNumber = "+1586324954",
                             Role = 0,
                             Status = 0
