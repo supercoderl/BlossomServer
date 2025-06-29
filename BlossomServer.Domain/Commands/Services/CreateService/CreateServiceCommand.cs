@@ -15,19 +15,19 @@ namespace BlossomServer.Domain.Commands.Services.CreateService
         public Guid ServiceId { get; }
         public string Name { get; }
         public string? Description { get; }
-        public Guid CategoryId { get; }
-        public decimal Price { get; }
-        public int DurationMinutes { get; }
-        public IFormFile RepresentativeImage { get; }
+        public Guid? CategoryId { get; }
+        public decimal? Price { get; }
+        public int? DurationMinutes { get; }
+        public IFormFile? RepresentativeImage { get; }
 
         public CreateServiceCommand(
             Guid serviceId,
             string name,
             string? description,
-            Guid categoryId,
-            decimal price,
-            int durationMinutes,
-            IFormFile representativeImage
+            Guid? categoryId,
+            decimal? price,
+            int? durationMinutes,
+            IFormFile? representativeImage
         ) : base(Guid.NewGuid())
         {
             ServiceId = serviceId;

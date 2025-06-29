@@ -12,9 +12,9 @@ namespace BlossomServer.Application.ViewModels.Services
         Guid ServiceId,
         string Name,
         string? Description,
-        Guid CategoryId,
-        decimal Price,
-        int DurationInMinutes,
+        Guid? CategoryId,
+        decimal? Price,
+        int? DurationInMinutes,
         IFormFile? RepesentativeImage
     );
 }

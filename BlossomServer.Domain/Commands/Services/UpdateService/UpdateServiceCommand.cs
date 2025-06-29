@@ -15,18 +15,18 @@ namespace BlossomServer.Domain.Commands.Services.UpdateService
         public Guid ServiceId { get; }
         public string Name { get; }
         public string? Description { get; }
-        public Guid CategoryId { get; }
-        public decimal Price { get; }
-        public int DurationMinutes { get; }
+        public Guid? CategoryId { get; }
+        public decimal? Price { get; }
+        public int? DurationMinutes { get; }
         public IFormFile? RepresentativeImage { get; }
 
         public UpdateServiceCommand(
             Guid serviceId,
             string name,
             string? description,
-            Guid categoryId,
-            decimal price,
-            int durationMinutes,
+            Guid? categoryId,
+            decimal? price,
+            int? durationMinutes,
             IFormFile? representativeImage
         ) : base(Guid.NewGuid())
         {

@@ -23,6 +23,7 @@ namespace BlossomServer.Infrastructure.Database
         public DbSet<Technician> Technicians { get; set; } = null!;
         public DbSet<WorkSchedule> WorkSchedules { get; set; } = null!;
         public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
+        public DbSet<ServiceOption> ServiceOptions { get; set; } = null!;
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -62,6 +63,7 @@ namespace BlossomServer.Infrastructure.Database
             builder.ApplyConfiguration(new TechnicianConfiguration());
             builder.ApplyConfiguration(new WorkScheduleConfiguration());
             builder.ApplyConfiguration(new RefreshTokenConfiguration());
+            builder.ApplyConfiguration(new ServiceOptionConfiguration());
         }
     }
 }

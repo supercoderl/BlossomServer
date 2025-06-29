@@ -4,6 +4,7 @@ using BlossomServer.Infrastructure.Database;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace BlossomServer.Infrastructure.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250629095948_ServiceOption")]
+    partial class ServiceOption
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -93,10 +96,7 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Property<int>("Quantity")
                         .HasColumnType("int");
 
-                    b.Property<Guid?>("ServiceId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid?>("ServiceOptionId")
+                    b.Property<Guid>("ServiceId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<decimal>("UnitPrice")
@@ -108,8 +108,6 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.HasIndex("BookingId");
 
                     b.HasIndex("ServiceId");
-
-                    b.HasIndex("ServiceOptionId");
 
                     b.ToTable("BookingDetails");
                 });
@@ -545,7 +543,7 @@ namespace BlossomServer.Infrastructure.Migrations
                             FirstName = "Admin",
                             Gender = 0,
                             LastName = "Super",
-                            Password = "$2a$11$AmzGmkw9HDz9QdUEZtAlhOyLcA.wYI7FmnuX5G9e/y1I5JMey/5X6",
+                            Password = "$2a$11$RZ0W3yPN.qezpWtz9oZ.E.or87J2G5pSRzikYOYyJq6craf/IHtUe",
                             PhoneNumber = "+1586324954",
                             Role = 0,
                             Status = 0
@@ -614,19 +612,12 @@ namespace BlossomServer.Infrastructure.Migrations
                         .WithMany("BookingDetails")
                         .HasForeignKey("ServiceId")
                         .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
                         .HasConstraintName("FK_BookingDetail_Service_ServiceId");
-
-                    b.HasOne("BlossomServer.Domain.Entities.ServiceOption", "ServiceOption")
-                        .WithMany("BookingDetails")
-                        .HasForeignKey("ServiceOptionId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .HasConstraintName("FK_BookingDetail_ServiceOption_ServiceOptionId");
 
                     b.Navigation("Booking");
 
                     b.Navigation("Service");
-
-                    b.Navigation("ServiceOption");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Notification", b =>
@@ -775,11 +766,6 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Navigation("ServiceImages");
 
                     b.Navigation("ServiceOptions");
-                });
-
-            modelBuilder.Entity("BlossomServer.Domain.Entities.ServiceOption", b =>
-                {
-                    b.Navigation("BookingDetails");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Technician", b =>

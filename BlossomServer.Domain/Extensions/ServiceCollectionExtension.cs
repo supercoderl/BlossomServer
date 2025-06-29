@@ -1,4 +1,5 @@
-﻿using BlossomServer.Domain.Commands.Bookings.CreateBooking;
+﻿using BlossomServer.Domain.Commands.BookingDetails.CreateBookingDetail;
+using BlossomServer.Domain.Commands.Bookings.CreateBooking;
 using BlossomServer.Domain.Commands.Bookings.UpdateBooking;
 using BlossomServer.Domain.Commands.Categories.CreateCategory;
 using BlossomServer.Domain.Commands.Categories.DeleteCategory;
@@ -18,6 +19,9 @@ using BlossomServer.Domain.Commands.Reviews.DeleteReview;
 using BlossomServer.Domain.Commands.Reviews.UpdateReview;
 using BlossomServer.Domain.Commands.ServiceImages.CreateServiceImage;
 using BlossomServer.Domain.Commands.ServiceImages.UpdateServiceImage;
+using BlossomServer.Domain.Commands.ServiceOptions.CreateServiceOption;
+using BlossomServer.Domain.Commands.ServiceOptions.DeleteServiceOption;
+using BlossomServer.Domain.Commands.ServiceOptions.UpdateServiceOption;
 using BlossomServer.Domain.Commands.Services.CreateService;
 using BlossomServer.Domain.Commands.Services.DeleteService;
 using BlossomServer.Domain.Commands.Services.UpdateService;
@@ -108,6 +112,14 @@ namespace BlossomServer.Domain.Extensions
 
             // File
             services.AddScoped<IRequestHandler<UploadFileCommand, string>, UploadFileCommandHandler>();
+
+            // Service Options
+            services.AddScoped<IRequestHandler<CreateServiceOptionCommand>, CreateServiceOptionCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdateServiceOptionCommand>, UpdateServiceOptionCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteServiceOptionCommand>, DeleteServiceOptionCommandHandler>();
+
+            // Booking Details
+            services.AddScoped<IRequestHandler<CreateBookingDetailCommand>, CreateBookingDetailCommandHandler>();
 
             return services;
         }

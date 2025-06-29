@@ -19,13 +19,13 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(s => s.Description);
 
-            builder.Property(s => s.CategoryId).IsRequired();
+            builder.Property(s => s.CategoryId);
 
-            builder.Property(s => s.Price).HasPrecision(10, 2).IsRequired();
+            builder.Property(s => s.Price).HasPrecision(10, 2);
 
-            builder.Property(s => s.DurationMinutes).IsRequired();
+            builder.Property(s => s.DurationMinutes);
 
-            builder.Property(s => s.RepresentativeImage).IsRequired();
+            builder.Property(s => s.RepresentativeImage);
 
             builder.Property(s => s.CreatedAt).IsRequired();
 

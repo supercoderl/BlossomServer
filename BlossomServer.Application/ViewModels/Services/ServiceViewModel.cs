@@ -1,4 +1,5 @@
-﻿using BlossomServer.Domain.Entities;
+﻿using BlossomServer.Application.ViewModels.ServiceOptions;
+using BlossomServer.Domain.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -10,14 +11,16 @@ namespace BlossomServer.Application.ViewModels.Services
     public sealed class ServiceViewModel
     {
         public Guid Id { get; set; }
-        public string Name { get; private set; } = string.Empty;
-        public string? Description { get; private set; }
-        public Guid CategoryId { get; private set; }
-        public decimal Price { get; private set; }
-        public int DurationMinutes { get; private set; }
-        public string RepresentativeImage { get; private set; } = string.Empty;
-        public DateTime CreatedAt { get; private set; }
-        public DateTime UpdatedAt { get; private set; }
+        public string Name { get; set; } = string.Empty;
+        public string? Description { get; set; }
+        public Guid? CategoryId { get; set; }
+        public decimal? Price { get; set; }
+        public int? DurationMinutes { get; set; }
+        public string? RepresentativeImage { get; set; } = string.Empty;
+        public DateTime CreatedAt { get; set; }
+        public DateTime UpdatedAt { get; set; }
+
+        public IEnumerable<ServiceOptionViewModel> Options { get; set; } = new List<ServiceOptionViewModel>();
 
         public static ServiceViewModel FromService(Service service)
         {
@@ -31,7 +34,8 @@ namespace BlossomServer.Application.ViewModels.Services
                 DurationMinutes = service.DurationMinutes,
                 RepresentativeImage = service.RepresentativeImage,
                 CreatedAt = service.CreatedAt,
-                UpdatedAt = service.UpdatedAt
+                UpdatedAt = service.UpdatedAt,
+                Options = service.ServiceOptions.Select(so => ServiceOptionViewModel.FromServiceOption(so))
             };
         }
     }

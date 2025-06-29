@@ -15,7 +15,10 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
         public Guid? CustomerId { get; }
         public Guid? TechnicianId { get; }
         public DateTime ScheduleTime { get; }
-        public decimal TotalPrice { get; }
+        public Guid? ServiceId { get; }
+        public Guid? ServiceOptionId { get; }
+        public int Quantity { get; }
+        public decimal Price { get; }
         public string? Note { get; }
         public string? GuestName { get; }
         public string? GuestPhone { get; }
@@ -26,7 +29,10 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
             Guid? customerId,
             Guid? technicianId,
             DateTime scheduleTime,
-            decimal totalPrice,
+            Guid? serviceId,
+            Guid? serviceOptionId,
+            int quantity,
+            decimal price,
             string? note,
             string? guestName,
             string? guestPhone,
@@ -37,7 +43,10 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
             CustomerId = customerId;
             TechnicianId = technicianId;
             ScheduleTime = scheduleTime;
-            TotalPrice = totalPrice;
+            ServiceId = serviceId;
+            ServiceOptionId = serviceOptionId;
+            Quantity = quantity;
+            Price = price;
             Note = note;
             GuestName = guestName;
             GuestPhone = guestPhone;

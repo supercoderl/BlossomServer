@@ -51,5 +51,12 @@ namespace BlossomServer.Domain.Errors
             public const string EmptyId = "SERVICE_IMAGE_EMPTY_ID";
             public const string EmptyName = "SERVICE_IMAGE_EMPTY_NAME";
         }
+
+        public static class ServiceOption
+        {
+            // Service Option Validation
+            public const string EmptyId = "SERVICE_OPTION_EMPTY_ID";
+            public const string EmptyVariantName = "SERVICE_OPTION_EMPTY_NAME";
+        }
     }
 }

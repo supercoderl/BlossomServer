@@ -30,6 +30,7 @@ namespace BlossomServer.Application.Queries.Services.GetAll
             var servicesQuery = _serviceRepository
                 .GetAllAsNoTracking()
                 .IgnoreQueryFilters()
+                .Include(x => x.ServiceOptions)
                 .Where(x => request.IncludeDeleted || x.DeletedAt == null);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))

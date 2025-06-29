@@ -10,7 +10,8 @@ namespace BlossomServer.Domain.Entities
     public class BookingDetail : Entity<Guid>
     {
         public Guid BookingId { get; private set; }
-        public Guid ServiceId { get; private set; }
+        public Guid? ServiceId { get; private set; }
+        public Guid? ServiceOptionId { get; private set; }
         public int Quantity { get; private set; }
         public decimal UnitPrice { get; private set; }
 
@@ -22,22 +23,29 @@ namespace BlossomServer.Domain.Entities
         [InverseProperty("BookingDetails")]
         public virtual Service? Service { get; set; }
 
+        [ForeignKey("ServiceOptionId")]
+        [InverseProperty("BookingDetails")]
+        public virtual ServiceOption? ServiceOption { get; set; }
+
         public BookingDetail(
             Guid id,
             Guid bookingId,
-            Guid serviceId,
+            Guid? serviceId,
+            Guid? serviceOptionId,
             int quantity,
             decimal unitPrice
         ) : base(id)
         {
             BookingId = bookingId;
             ServiceId = serviceId;
+            ServiceOptionId = serviceOptionId;
             Quantity = quantity;
             UnitPrice = unitPrice;
         }
 
         public void SetBookingId( Guid bookingId ) { BookingId = bookingId; }
-        public void SetServiceId( Guid serviceId ) { ServiceId = serviceId; }
+        public void SetServiceId( Guid? serviceId ) { ServiceId = serviceId; }
+        public void SetServiceOptionId(Guid? serviceOptionId) {  ServiceOptionId = serviceOptionId; }
         public void SetQuantity( int quantity ) { Quantity = quantity; }
         public void SetUnitPrice( decimal unitPrice ) { UnitPrice = unitPrice; }
     }

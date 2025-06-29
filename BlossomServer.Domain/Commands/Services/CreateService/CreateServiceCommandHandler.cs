@@ -30,11 +30,16 @@ namespace BlossomServer.Domain.Commands.Services.CreateService
         {
             if (!await TestValidityAsync(request)) return;
 
-            var url = await Bus.QueryAsync(new UploadFileCommand(
-                request.RepresentativeImage,
-                null,
-                false
-            ));
+            string? url = null;
+
+            if(request.RepresentativeImage != null)
+            {
+                url = await Bus.QueryAsync(new UploadFileCommand(
+                    request.RepresentativeImage,
+                    null,
+                    false
+                ));
+            }
 
             var service = new Entities.Service(
                 request.ServiceId,

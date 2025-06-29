@@ -1,4 +1,5 @@
-﻿using BlossomServer.Domain.Interfaces;
+﻿using BlossomServer.Domain.Commands.BookingDetails.CreateBookingDetail;
+using BlossomServer.Domain.Interfaces;
 using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Shared.Events.Booking;
@@ -34,7 +35,7 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
                 request.CustomerId,
                 request.TechnicianId,
                 request.ScheduleTime,
-                request.TotalPrice,
+                request.Price * request.Quantity,
                 Enums.BookingStatus.Pending,
                 request.Note,
                 request.GuestName,
@@ -47,6 +48,14 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
             if(await CommitAsync())
             {
                 await Bus.RaiseEventAsync(new BookingCreatedEvent(booking.Id));
+                await Bus.SendCommandAsync(new CreateBookingDetailCommand(
+                    Guid.NewGuid(),
+                    booking.Id,
+                    request.ServiceId,
+                    request.ServiceOptionId,
+                    request.Quantity,
+                    request.Price
+                ));
             }
         }
     }

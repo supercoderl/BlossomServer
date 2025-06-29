@@ -17,7 +17,9 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(bd => bd.BookingId).IsRequired();
 
-            builder.Property(bd => bd.ServiceId).IsRequired();
+            builder.Property(bd => bd.ServiceId);
+
+            builder.Property(bd => bd.ServiceOptionId);
 
             builder.Property(bd => bd.Quantity).IsRequired();
 
@@ -33,7 +35,13 @@ namespace BlossomServer.Infrastructure.Configuration
                 .WithMany(bd => bd.BookingDetails)
                 .HasForeignKey(s => s.ServiceId)
                 .HasConstraintName("FK_BookingDetail_Service_ServiceId")
-                .OnDelete(DeleteBehavior.Cascade);
+                .OnDelete(DeleteBehavior.SetNull);
+
+            builder.HasOne(so => so.ServiceOption)
+                .WithMany(bd => bd.BookingDetails)
+                .HasForeignKey(so => so.ServiceOptionId)
+                .HasConstraintName("FK_BookingDetail_ServiceOption_ServiceOptionId")
+                .OnDelete(DeleteBehavior.SetNull);
         }
     }
 }
