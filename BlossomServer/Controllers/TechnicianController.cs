@@ -28,6 +28,7 @@ namespace BlossomServer.Controllers
             _technicianService = technicianService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [SwaggerOperation("Get a list of all technicians")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<TechnicianViewModel>>))]
