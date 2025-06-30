@@ -28,6 +28,7 @@ namespace BlossomServer.Controllers
             _serviceService = serviceService;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         [SwaggerOperation("Get a list of all services")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<ServiceViewModel>>))]
@@ -46,6 +47,7 @@ namespace BlossomServer.Controllers
             return Response(services);
         }
 
+        [AllowAnonymous]
         [HttpGet("{id}")]
         [SwaggerOperation("Get a service by id")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<ServiceViewModel>))]
