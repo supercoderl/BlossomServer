@@ -10,7 +10,7 @@ namespace BlossomServer.Application.ViewModels.Bookings
     (
         Guid? CustomerId,
         Guid? TechnicianId,
-        DateTime ScheduleTime,
+        string ScheduleTime,
         Guid? ServiceId,
         Guid? ServiceOptionId,
         int Quantity,

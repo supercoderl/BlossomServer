@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -65,6 +66,31 @@ namespace BlossomServer.SharedKernel.Utils
             var localDateTime = TimeZoneInfo.ConvertTimeFromUtc(utcTime.UtcDateTime, timeZone);
             var offset = timeZone.GetUtcOffset(localDateTime);
             return new DateTimeOffset(localDateTime, offset);
+        }
+
+        /// <summary>
+        /// Convert string (e.g. "2025-07-15T12:00:00") to DateTime with Local kind.
+        /// </summary>
+        /// <param name="dateTimeString">ISO format without Z</param>
+        /// <param name="result">Parsed DateTime (output)</param>
+        /// <returns>True if parsed successfully; false otherwise</returns>
+        public static bool TryParseLocalDateTime(string dateTimeString, out DateTime result)
+        {
+            bool success = DateTime.TryParseExact(
+                dateTimeString,
+                "yyyy-MM-ddTHH:mm:ss",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out result
+            );
+
+            if (success)
+            {
+                // Ensure it's marked as Local kind
+                result = DateTime.SpecifyKind(result, DateTimeKind.Local);
+            }
+
+            return success;
         }
     }
 }

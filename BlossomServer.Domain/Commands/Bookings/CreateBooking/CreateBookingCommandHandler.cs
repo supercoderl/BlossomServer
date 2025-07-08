@@ -1,8 +1,10 @@
 ﻿using BlossomServer.Domain.Commands.BookingDetails.CreateBookingDetail;
+using BlossomServer.Domain.Errors;
 using BlossomServer.Domain.Interfaces;
 using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Shared.Events.Booking;
+using BlossomServer.SharedKernel.Utils;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -30,11 +32,21 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
         {
             if (!await TestValidityAsync(request)) return;
 
+            if (!TimeZoneHelper.TryParseLocalDateTime(request.ScheduleTime, out var scheduleTime))
+            {
+                await NotifyAsync(new DomainNotification(
+                    request.MessageType,
+                    $"Schedule time is not correct format",
+                    ErrorCodes.InsufficientPermissions
+                ));
+                return;
+            }
+
             var booking = new Entities.Booking(
                 request.BookingId,
                 request.CustomerId,
                 request.TechnicianId,
-                request.ScheduleTime,
+                scheduleTime,
                 request.Price * request.Quantity,
                 Enums.BookingStatus.Pending,
                 request.Note,

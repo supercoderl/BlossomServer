@@ -14,7 +14,7 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
         public Guid BookingId { get; }
         public Guid? CustomerId { get; }
         public Guid? TechnicianId { get; }
-        public DateTime ScheduleTime { get; }
+        public string ScheduleTime { get; }
         public Guid? ServiceId { get; }
         public Guid? ServiceOptionId { get; }
         public int Quantity { get; }
@@ -28,7 +28,7 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
             Guid bookingId,
             Guid? customerId,
             Guid? technicianId,
-            DateTime scheduleTime,
+            string scheduleTime,
             Guid? serviceId,
             Guid? serviceOptionId,
             int quantity,
