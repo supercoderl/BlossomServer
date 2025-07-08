@@ -53,8 +53,8 @@ namespace BlossomServer.Controllers
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<IEnumerable<(DateTime start, TimeSpan duration)>>))]
         public async Task<IActionResult> GetAllTimeSlotForCustomerAsync(
             [FromQuery] Guid technicianId,
-            [FromQuery] string selectedDate,
-        SortQuery? sortQuery = null)
+            [FromQuery] string selectedDate
+        )
         {
             if (!DateTime.TryParseExact(
                 selectedDate,
