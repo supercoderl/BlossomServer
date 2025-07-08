@@ -51,7 +51,7 @@ namespace BlossomServer.Application.Services
             return await _bus.QueryAsync(new GetAllBookingsQuery(query, includeDeleted, searchTerm, sortQuery));
         }
 
-        public async Task<IEnumerable<(DateTime start, TimeSpan duration)>> GetAllTimeSlotForTechinicianAsync(Guid technicianId, DateTime selectedDate)
+        public async Task<IEnumerable<ScheduleSlot>> GetAllTimeSlotForTechinicianAsync(Guid technicianId, DateTime selectedDate)
         {
             return await _bus.QueryAsync(new GetAllTimeSlotForTechnicianQuery(technicianId, selectedDate));
         }

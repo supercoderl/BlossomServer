@@ -13,7 +13,7 @@ namespace BlossomServer.Application.Interfaces
             bool includeDeleted,
             string searchTerm = "",
             SortQuery? sortQuery = null);
-        public Task<IEnumerable<(DateTime start, TimeSpan duration)>> GetAllTimeSlotForTechinicianAsync(
+        public Task<IEnumerable<ScheduleSlot>> GetAllTimeSlotForTechinicianAsync(
             Guid technicianId,
             DateTime selectedDate
         );
