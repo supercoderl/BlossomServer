@@ -26,16 +26,27 @@ namespace BlossomServer.Infrastructure.Repositories
 
             foreach (var booking in bookings)
             {
-                int duration = await _context.BookingDetails
-                    .Where(d => d.BookingId == booking.Id)
-                    .Include(d => d.Service)
-                    .Join(_context.ServiceOptions,
-                        detail => detail.ServiceOptionId,
-                        option => option.Id,
-                        (detail, option) => option.Service != null ? option.Service.DurationMinutes : 0)
-                    .FirstOrDefaultAsync() ?? 0;
+                var details = await _context.BookingDetails
+                        .Where(d => d.BookingId == booking.Id)
+                        .Include(d => d.ServiceOption)
+                        .Include(d => d.Service)
+                        .ToListAsync();
 
-                result.Add((booking.ScheduleTime, TimeSpan.FromMinutes(duration)));
+                int totalDuration = 0;
+
+                foreach (var detail in details)
+                {
+                    if (detail.ServiceOptionId.HasValue)
+                    {
+                        totalDuration += detail.ServiceOption?.DurationMinutes ?? 0;
+                    }
+                    else if (detail.ServiceId.HasValue)
+                    {
+                        totalDuration += detail.Service?.DurationMinutes ?? 0;
+                    }
+                }
+
+                result.Add((booking.ScheduleTime, TimeSpan.FromMinutes(totalDuration)));
             }
 
             return result;
