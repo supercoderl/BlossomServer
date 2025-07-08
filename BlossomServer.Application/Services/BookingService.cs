@@ -1,5 +1,6 @@
 ﻿using BlossomServer.Application.Interfaces;
 using BlossomServer.Application.Queries.Bookings.GetAll;
+using BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician;
 using BlossomServer.Application.Queries.Bookings.GetById;
 using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Bookings;
@@ -48,6 +49,11 @@ namespace BlossomServer.Application.Services
         public async Task<PagedResult<BookingViewModel>> GetAllBookingsAsync(PageQuery query, bool includeDeleted, string searchTerm = "", SortQuery? sortQuery = null)
         {
             return await _bus.QueryAsync(new GetAllBookingsQuery(query, includeDeleted, searchTerm, sortQuery));
+        }
+
+        public async Task<IEnumerable<(DateTime start, TimeSpan duration)>> GetAllTimeSlotForTechinicianAsync(Guid technicianId, DateTime selectedDate)
+        {
+            return await _bus.QueryAsync(new GetAllTimeSlotForTechnicianQuery(technicianId, selectedDate));
         }
 
         public async Task<BookingViewModel?> GetBookingByBookingIdAsync(Guid bookingId)

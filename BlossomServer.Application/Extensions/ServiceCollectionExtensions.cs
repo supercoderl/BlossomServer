@@ -39,6 +39,7 @@ using BlossomServer.Application.Queries.ServiceImages.GetAll;
 using BlossomServer.Application.ViewModels.ServiceImages;
 using BlossomServer.Application.Queries.Payments.GetAll;
 using BlossomServer.Application.ViewModels.Payments;
+using BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician;
 
 namespace BlossomServer.Application.Extensions
 {
@@ -70,6 +71,7 @@ namespace BlossomServer.Application.Extensions
             // Booking
             services.AddScoped<IRequestHandler<GetBookingByIdQuery, BookingViewModel?>, GetBookingByIdQueryHandler>();
             services.AddScoped<IRequestHandler<GetAllBookingsQuery, PagedResult<BookingViewModel>>, GetAllBookingsQueryHandler>();
+            services.AddScoped<IRequestHandler<GetAllTimeSlotForTechnicianQuery, IEnumerable<(DateTime start, TimeSpan duration)>>, GetAllTimeSlotForTechnicianQueryHandler>();
 
             // Category
             services.AddScoped<IRequestHandler<GetCategoryByIdQuery, CategoryViewModel?>, GetCategoryByIdQueryHandler>();

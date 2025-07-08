@@ -9,5 +9,6 @@ namespace BlossomServer.Domain.Interfaces.Repositories
 {
     public interface IBookingRepository : IRepository<Booking, Guid>
     {
+        Task<IEnumerable<(DateTime start, TimeSpan duration)>> GetScheduleTimes(Guid technicianId, DateTime selectedDate);
     }
 }

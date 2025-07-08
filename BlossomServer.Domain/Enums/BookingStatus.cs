@@ -9,6 +9,7 @@ namespace BlossomServer.Domain.Enums
     public enum BookingStatus
     {
         Pending,
+        Confirmed,
         Paid,
         Failed,
         Canceled,

@@ -11,6 +11,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
+using System.Globalization;
 
 namespace BlossomServer.Controllers
 {
@@ -43,6 +44,28 @@ namespace BlossomServer.Controllers
                 includeDeleted,
                 searchTerm,
                 sortQuery);
+            return Response(bookings);
+        }
+
+        [HttpGet("time-slots")]
+        [SwaggerOperation("Get a list of all time slots for techinician")]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<IEnumerable<(DateTime start, TimeSpan duration)>>))]
+        public async Task<IActionResult> GetAllTimeSlotForCustomerAsync(
+            [FromQuery] Guid technicianId,
+            [FromQuery] string selectedDate,
+        SortQuery? sortQuery = null)
+        {
+            if (!DateTime.TryParseExact(
+                selectedDate,
+                "yyyy-MM-dd",
+                CultureInfo.InvariantCulture,
+                DateTimeStyles.None,
+                out var date))
+            {
+                return BadRequest("Invalid date format. Expected yyyy-MM-dd.");
+            }
+
+            var bookings = await _bookingService.GetAllTimeSlotForTechinicianAsync(technicianId, date);
             return Response(bookings);
         }
 
