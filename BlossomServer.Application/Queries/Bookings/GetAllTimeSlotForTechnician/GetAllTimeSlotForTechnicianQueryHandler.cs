@@ -10,11 +10,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using MassTransit.Initializers;
 
 namespace BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician
 {
     public sealed class GetAllTimeSlotForTechnicianQueryHandler :
-            IRequestHandler<GetAllTimeSlotForTechnicianQuery, IEnumerable<(DateTime start, TimeSpan duration)>>
+            IRequestHandler<GetAllTimeSlotForTechnicianQuery, IEnumerable<ScheduleSlot>>
     {
         private readonly IBookingRepository _bookingRepository;
 
@@ -25,11 +26,17 @@ namespace BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician
             _bookingRepository = bookingRepository;
         }
 
-        public async Task<IEnumerable<(DateTime start, TimeSpan duration)>> Handle(
+        public async Task<IEnumerable<ScheduleSlot>> Handle(
             GetAllTimeSlotForTechnicianQuery request,
             CancellationToken cancellationToken)
         {
-            return await _bookingRepository.GetScheduleTimes(request.technicianId, request.selectedDate);
+            var slots = await _bookingRepository.GetScheduleTimes(request.technicianId, request.selectedDate);
+
+            return slots.Select(slot => new ScheduleSlot
+            {
+                Start = slot.start,
+                Duration = slot.duration
+            }).ToList();
         }
     }
 }

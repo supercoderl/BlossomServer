@@ -71,7 +71,7 @@ namespace BlossomServer.Application.Extensions
             // Booking
             services.AddScoped<IRequestHandler<GetBookingByIdQuery, BookingViewModel?>, GetBookingByIdQueryHandler>();
             services.AddScoped<IRequestHandler<GetAllBookingsQuery, PagedResult<BookingViewModel>>, GetAllBookingsQueryHandler>();
-            services.AddScoped<IRequestHandler<GetAllTimeSlotForTechnicianQuery, IEnumerable<(DateTime start, TimeSpan duration)>>, GetAllTimeSlotForTechnicianQueryHandler>();
+            services.AddScoped<IRequestHandler<GetAllTimeSlotForTechnicianQuery, IEnumerable<ScheduleSlot>>, GetAllTimeSlotForTechnicianQueryHandler>();
 
             // Category
             services.AddScoped<IRequestHandler<GetCategoryByIdQuery, CategoryViewModel?>, GetCategoryByIdQueryHandler>();

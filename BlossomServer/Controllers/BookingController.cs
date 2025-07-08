@@ -50,7 +50,7 @@ namespace BlossomServer.Controllers
         [HttpGet("time-slots")]
         [AllowAnonymous]
         [SwaggerOperation("Get a list of all time slots for techinician")]
-        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<IEnumerable<(DateTime start, TimeSpan duration)>>))]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<IEnumerable<ScheduleSlot>>))]
         public async Task<IActionResult> GetAllTimeSlotForCustomerAsync(
             [FromQuery] Guid technicianId,
             [FromQuery] string selectedDate
