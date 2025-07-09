@@ -30,6 +30,9 @@ namespace BlossomServer.Application.Queries.Bookings.GetAll
             var bookingsQuery = _bookingRepository
                 .GetAllAsNoTracking()
                 .IgnoreQueryFilters()
+                .Include(x => x.BookingDetails)
+                    .ThenInclude(x => x.ServiceOption)
+                    .ThenInclude(x => x.Service)
                 .Where(x => request.IncludeDeleted || x.DeletedAt == null);
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))

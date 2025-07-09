@@ -8,6 +8,21 @@ using System.Threading.Tasks;
 
 namespace BlossomServer.Application.ViewModels.Bookings
 {
+    public sealed class BookingDetail
+    {
+        public Guid Id { get; set; }
+        public int Quantity { get; set; }
+        public decimal UnitPrice { get; set; }
+
+        public ServiceOrOption? Service { get; set; }
+    }
+
+    public sealed class ServiceOrOption
+    {
+        public Guid Id { get; set; }
+        public int DurationMinutes { get; set; }
+    }
+
     public sealed class BookingViewModel
     {
         public Guid Id { get; set; }
@@ -22,6 +37,8 @@ namespace BlossomServer.Application.ViewModels.Bookings
         public string? GuestEmail { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
+
+        public IEnumerable<BookingDetail> BookingDetails { get; set; } = Enumerable.Empty<BookingDetail>();
 
         public static BookingViewModel FromBooking(Booking booking)
         {
@@ -38,7 +55,22 @@ namespace BlossomServer.Application.ViewModels.Bookings
                 GuestPhone = booking.GuestPhone,
                 GuestEmail = booking.GuestEmail,
                 CreatedAt = booking.CreatedAt,
-                UpdatedAt = booking.UpdatedAt
+                UpdatedAt = booking.UpdatedAt,
+                BookingDetails = booking.BookingDetails.Select(bd => new BookingDetail
+                {
+                    Id = bd.Id,
+                    Quantity = bd.Quantity,
+                    UnitPrice = bd.UnitPrice,
+                    Service = bd.Service != null ? new ServiceOrOption
+                    {
+                        Id = bd.Service.Id,
+                        DurationMinutes = bd.Service.DurationMinutes ?? 0
+                    } : bd.ServiceOption != null ? new ServiceOrOption
+                    {
+                        Id = bd.ServiceOption.Id,
+                        DurationMinutes = bd.ServiceOption.DurationMinutes ?? 0
+                    } : null
+                })
             };
         }
     }
