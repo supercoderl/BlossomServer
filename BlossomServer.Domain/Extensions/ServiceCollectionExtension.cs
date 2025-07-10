@@ -155,5 +155,15 @@ namespace BlossomServer.Domain.Extensions
 
             return services;
         }
+
+        public static IServiceCollection AddImageKit(this IServiceCollection services, IConfiguration configuration)
+        {
+            services
+                .AddOptions<ImageKitSettings>()
+                .Bind(configuration.GetSection("ImageKit"))
+                .ValidateOnStart();
+
+            return services;
+        }
     }
 }

@@ -75,6 +75,7 @@ builder.Services.AddCommandHandlers();
 builder.Services.AddNotificationHandlers();
 builder.Services.AddApiUser();
 builder.Services.AddBunnyCDN(builder.Configuration);
+builder.Services.AddImageKit(builder.Configuration);
 builder.Services.AddHttpClient();
 
 builder.Services.AddMassTransit(x =>

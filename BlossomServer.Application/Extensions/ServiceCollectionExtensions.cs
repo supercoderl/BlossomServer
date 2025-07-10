@@ -58,6 +58,7 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<IServiceImageService, ServiceImageService>();
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IServiceOptionService, ServiceOptionService>();
+            services.AddScoped<IFileService, FileService>();
 
             return services;
         }
