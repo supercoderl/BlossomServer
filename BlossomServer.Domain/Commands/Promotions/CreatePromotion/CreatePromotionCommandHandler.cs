@@ -1,7 +1,9 @@
-﻿using BlossomServer.Domain.Interfaces;
+﻿using BlossomServer.Domain.Errors;
+using BlossomServer.Domain.Interfaces;
 using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Shared.Events.Promotion;
+using BlossomServer.SharedKernel.Utils;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -29,6 +31,16 @@ namespace BlossomServer.Domain.Commands.Promotions.CreatePromotion
         {
             if (!await TestValidityAsync(request)) return;
 
+            if (!TimeZoneHelper.TryParseLocalDateTime(request.StartDate, out var startDate) || !TimeZoneHelper.TryParseLocalDateTime(request.EndDate, out var endDate))
+            {
+                await NotifyAsync(new DomainNotification(
+                    request.MessageType,
+                    $"Date is not correct format",
+                    ErrorCodes.InsufficientPermissions
+                ));
+                return;
+            }
+
             var promotion = new Entities.Promotion(
                 request.PromotionId,
                 request.Code,
@@ -36,8 +48,8 @@ namespace BlossomServer.Domain.Commands.Promotions.CreatePromotion
                 request.DiscountType,
                 request.DiscountValue,
                 request.MinimumSpend,
-                request.StartDate,
-                request.EndDate,
+                startDate,
+                endDate,
                 request.MaxUsage,
                 request.CurrentUsage,
                 request.IsActive

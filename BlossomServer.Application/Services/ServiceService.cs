@@ -61,7 +61,7 @@ namespace BlossomServer.Application.Services
                 service.CategoryId,
                 service.Price,
                 service.DurationInMinutes,
-                service.RepesentativeImage
+                service.RepresentativeImage
             ));
         }
     }

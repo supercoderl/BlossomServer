@@ -77,7 +77,17 @@ namespace BlossomServer.Domain.Commands.Users.Login
                 AccessToken = TokenHelper.BuildToken(
                 user,
                 _tokenSettings),
-                RefreshToken = refreshToken
+                RefreshToken = refreshToken,
+                UserInfo = new
+                {
+                    id = user.Id,
+                    email = user.Email,
+                    fullName = user.FullName,
+                    phoneNumber = user.PhoneNumber,
+                    role = user.Role.ToString(),
+                    avatarUrl = user.AvatarUrl,
+                    lastLogin = user.LastLoggedinDate
+                }
             };
         }
     }

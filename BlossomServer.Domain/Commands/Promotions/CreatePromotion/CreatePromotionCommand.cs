@@ -18,8 +18,8 @@ namespace BlossomServer.Domain.Commands.Promotions.CreatePromotion
         public DiscountType DiscountType { get; }
         public decimal DiscountValue { get; }
         public decimal MinimumSpend { get; }
-        public DateTime StartDate { get; }
-        public DateTime EndDate { get; }
+        public string StartDate { get; }
+        public string EndDate { get; }
         public int MaxUsage { get; }
         public int CurrentUsage { get; }
         public bool IsActive { get; }
@@ -31,8 +31,8 @@ namespace BlossomServer.Domain.Commands.Promotions.CreatePromotion
             DiscountType discountType,
             decimal discountValue,
             decimal minimumSpend,
-            DateTime startDate,
-            DateTime endDate,
+            string startDate,
+            string endDate,
             int maxUsage,
             int currentUsage,
             bool isActive

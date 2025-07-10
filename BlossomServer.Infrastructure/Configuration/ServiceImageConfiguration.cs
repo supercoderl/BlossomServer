@@ -15,7 +15,10 @@ namespace BlossomServer.Infrastructure.Configuration
         {
             builder.HasKey(si => si.Id);
 
-            builder.Property(si => si.ImageName).IsRequired();
+            builder
+                .Property(si => si.ImageName)
+                .IsRequired()
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             builder.Property(si => si.ImageUrl).IsRequired();
 

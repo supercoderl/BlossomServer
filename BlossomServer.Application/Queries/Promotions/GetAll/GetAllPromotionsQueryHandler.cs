@@ -34,7 +34,7 @@ namespace BlossomServer.Application.Queries.Promotions.GetAll
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-
+                promotionsQuery = promotionsQuery.Where(s => EF.Functions.Like(s.Code, $"%{request.SearchTerm}%"));
             }
 
             var totalCount = await promotionsQuery.CountAsync(cancellationToken);

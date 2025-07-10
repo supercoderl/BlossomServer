@@ -14,8 +14,8 @@ namespace BlossomServer.Application.ViewModels.Promotions
         DiscountType DiscountType,
         decimal DiscountValue,
         decimal MinimumSpend,
-        DateTime StartDate,
-        DateTime EndDate,
+        string StartDate,
+        string EndDate,
         int MaxUsage
     );
 }

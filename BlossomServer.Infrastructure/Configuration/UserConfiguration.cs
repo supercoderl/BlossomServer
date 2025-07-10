@@ -16,15 +16,18 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(u => u.Email)
                 .IsRequired()
-                .HasMaxLength(100);
+                .HasMaxLength(100)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             builder.Property(u => u.FirstName)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(50)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             builder.Property(u => u.LastName)
                 .IsRequired()
-                .HasMaxLength(50);
+                .HasMaxLength(50)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             builder.Property(u => u.PhoneNumber)
                 .IsRequired()

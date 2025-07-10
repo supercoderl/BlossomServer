@@ -35,7 +35,7 @@ namespace BlossomServer.Application.Queries.Services.GetAll
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-
+                servicesQuery = servicesQuery.Where(s => EF.Functions.Like(s.Name, $"%{request.SearchTerm}%"));
             }
 
             var totalCount = await servicesQuery.CountAsync(cancellationToken);

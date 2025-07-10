@@ -23,7 +23,10 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(r => r.Rating).IsRequired();
 
-            builder.Property(r => r.Comment).IsRequired();  
+            builder
+                .Property(r => r.Comment)
+                .IsRequired()
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");  
 
             builder.Property(r => r.CreatedAt).IsRequired();
 

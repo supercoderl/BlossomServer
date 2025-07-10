@@ -27,11 +27,15 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(b => b.Note);
 
-            builder.Property(b => b.GuestName);
+            builder
+                .Property(b => b.GuestName)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             builder.Property(b => b.GuestPhone);
 
-            builder.Property(b => b.GuestEmail);
+            builder
+                .Property(b => b.GuestEmail)
+                .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             builder.Property(b => b.CreatedAt).IsRequired();
 

@@ -34,7 +34,7 @@ namespace BlossomServer.Application.Queries.Categories.GetAll
 
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
-
+                categoriesQuery = categoriesQuery.Where(s => EF.Functions.Like(s.Name, $"%{request.SearchTerm}%"));
             }
 
             var totalCount = await categoriesQuery.CountAsync(cancellationToken);
@@ -44,6 +44,7 @@ namespace BlossomServer.Application.Queries.Categories.GetAll
             var categories = await categoriesQuery
                 .Skip((request.Query.Page - 1) * request.Query.PageSize)
                 .Take(request.Query.PageSize)
+                .OrderBy(s => s.Priority)
                 .Select(category => CategoryViewModel.FromCategory(category))
                 .ToListAsync(cancellationToken);
 
