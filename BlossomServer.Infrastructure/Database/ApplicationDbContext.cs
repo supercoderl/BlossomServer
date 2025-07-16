@@ -1,11 +1,6 @@
 ﻿using BlossomServer.Domain.Entities;
 using BlossomServer.Infrastructure.Configuration;
 using Microsoft.EntityFrameworkCore;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlossomServer.Infrastructure.Database
 {
@@ -24,14 +19,17 @@ namespace BlossomServer.Infrastructure.Database
         public DbSet<WorkSchedule> WorkSchedules { get; set; } = null!;
         public DbSet<RefreshToken> RefreshTokens { get; set; } = null!;
         public DbSet<ServiceOption> ServiceOptions { get; set; } = null!;
+        public DbSet<Message> Messages { get; set; } = null!;
+        public DbSet<Conversation> Conversations { get; set; } = null!;
+        public DbSet<ConversationParticipant> ConversationParticipants { get; set; } = null!;
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            foreach(var entity in modelBuilder.Model.GetEntityTypes())
+            foreach (var entity in modelBuilder.Model.GetEntityTypes())
             {
-                if(entity.ClrType.GetProperty(DbContextUtility.IsDeleteProperty) is not null)
+                if (entity.ClrType.GetProperty(DbContextUtility.IsDeleteProperty) is not null)
                 {
                     modelBuilder.Entity(entity.ClrType).HasQueryFilter(DbContextUtility.GetIsDeletedRestriction(entity.ClrType));
                 }
@@ -40,7 +38,7 @@ namespace BlossomServer.Infrastructure.Database
 
             ApplyConfigurations(modelBuilder);
 
-            foreach(var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(x => x.GetForeignKeys()))
+            foreach (var relationship in modelBuilder.Model.GetEntityTypes().SelectMany(x => x.GetForeignKeys()))
             {
                 relationship.DeleteBehavior = DeleteBehavior.Restrict;
             }
@@ -64,6 +62,9 @@ namespace BlossomServer.Infrastructure.Database
             builder.ApplyConfiguration(new WorkScheduleConfiguration());
             builder.ApplyConfiguration(new RefreshTokenConfiguration());
             builder.ApplyConfiguration(new ServiceOptionConfiguration());
+            builder.ApplyConfiguration(new MessageConfiguration());
+            builder.ApplyConfiguration(new ConversationConfiguration());
+            builder.ApplyConfiguration(new ConversationParticipantConfiguration());
         }
     }
 }

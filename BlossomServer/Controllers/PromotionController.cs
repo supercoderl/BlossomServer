@@ -55,6 +55,16 @@ namespace BlossomServer.Controllers
             return Response(promotion);
         }
 
+        [HttpGet("check")]
+        [AllowAnonymous]
+        [SwaggerOperation("Get a promotion by code")]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<object>))]
+        public async Task<IActionResult> CheckPromotionAsync([FromQuery] string code)
+        {
+            var result = await _promotionService.CheckPromotionAsync(code);
+            return Response(result);
+        }
+
         [HttpPost]
         [SwaggerOperation("Create a new promotion")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<Guid>))]

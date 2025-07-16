@@ -38,7 +38,7 @@ namespace BlossomServer.Application.Queries.Users.GetById
                 return null;
             }
 
-            return UserViewModel.FromUser(user);
+            return UserViewModel.FromUser(user, "web", null, null);
         }
     }
 }

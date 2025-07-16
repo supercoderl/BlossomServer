@@ -1,11 +1,7 @@
 ﻿using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Infrastructure.Database;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace BlossomServer.Infrastructure.Repositories
 {
@@ -13,7 +9,12 @@ namespace BlossomServer.Infrastructure.Repositories
     {
         public PromotionRepository(ApplicationDbContext context) : base(context)
         {
-            
+
+        }
+
+        public async Task<Promotion?> CheckByCode(string code)
+        {
+            return await DbSet.SingleOrDefaultAsync(c => c.Code == code);
         }
     }
 }

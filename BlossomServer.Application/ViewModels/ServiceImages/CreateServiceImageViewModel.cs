@@ -9,7 +9,7 @@ namespace BlossomServer.Application.ViewModels.ServiceImages
 {
     public sealed record CreateServiceImageViewModel
     (
-        IFormFile ImageFile,
+        List<IFormFile> ImageFile,
         Guid ServiceId,
         string? Description
     );

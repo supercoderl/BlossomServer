@@ -41,10 +41,12 @@ namespace BlossomServer.Infrastructure.Migrations
                         .HasColumnType("datetimeoffset");
 
                     b.Property<string>("GuestEmail")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<string>("GuestName")
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<string>("GuestPhone")
                         .HasColumnType("nvarchar(max)");
@@ -135,7 +137,8 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<int>("Priority")
                         .HasColumnType("int");
@@ -150,6 +153,112 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Categories");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Conversation", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("ConversationType")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTime>("LastActivity")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid?>("LastMessageId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Conversations");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.ConversationParticipant", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("ConversationParticipants");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Message", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ConversationId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsRead")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime?>("LastUpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("MessageText")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("MessageType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid?>("RecipientId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("UnreadCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ConversationId");
+
+                    b.HasIndex("RecipientId");
+
+                    b.HasIndex("SenderId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Notification", b =>
@@ -312,7 +421,8 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<string>("Comment")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
@@ -363,7 +473,8 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<decimal?>("Price")
                         .HasPrecision(10, 2)
@@ -399,7 +510,8 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<string>("ImageName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<string>("ImageUrl")
                         .IsRequired()
@@ -440,7 +552,8 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<string>("VariantName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)");
+                        .HasColumnType("nvarchar(max)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.HasKey("Id");
 
@@ -489,6 +602,9 @@ namespace BlossomServer.Infrastructure.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("CoverPhotoUrl")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<DateOnly>("DateOfBirth")
                         .HasColumnType("date");
 
@@ -498,12 +614,14 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(100)
-                        .HasColumnType("nvarchar(100)");
+                        .HasColumnType("nvarchar(100)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<int>("Gender")
                         .HasColumnType("int");
@@ -514,7 +632,8 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Property<string>("LastName")
                         .IsRequired()
                         .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
+                        .HasColumnType("nvarchar(50)")
+                        .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<string>("Password")
                         .IsRequired()
@@ -531,6 +650,9 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Property<int>("Status")
                         .HasColumnType("int");
 
+                    b.Property<string>("Website")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("Id");
 
                     b.ToTable("Users");
@@ -540,14 +662,28 @@ namespace BlossomServer.Infrastructure.Migrations
                         {
                             Id = new Guid("7e3892c0-9374-49fa-a3fd-53db637a40ae"),
                             AvatarUrl = "https://haamc.offerslokam.com/wp-content/uploads/2023/09/client-dummy-Google-Search-1.png",
-                            DateOfBirth = new DateOnly(2025, 6, 29),
+                            DateOfBirth = new DateOnly(2025, 7, 15),
                             Email = "admin@gmail.com",
                             FirstName = "Admin",
                             Gender = 0,
                             LastName = "Super",
-                            Password = "$2a$11$AmzGmkw9HDz9QdUEZtAlhOyLcA.wYI7FmnuX5G9e/y1I5JMey/5X6",
+                            Password = "$2a$11$.scxhThOWo1kAF2wsIhWMucApPSHM7cOm..a4RGuixYiFEb2yvWGG",
                             PhoneNumber = "+1586324954",
                             Role = 0,
+                            Status = 0
+                        },
+                        new
+                        {
+                            Id = new Guid("98f7750d-655a-4724-812f-50b4ab64012d"),
+                            AvatarUrl = "https://avatars.githubusercontent.com/u/6422482?v=4",
+                            DateOfBirth = new DateOnly(2025, 7, 15),
+                            Email = "bot@nblossom.com",
+                            FirstName = "Bot",
+                            Gender = 3,
+                            LastName = "System",
+                            Password = "$2a$11$2ePtlaXHFzw3XTVwGzPbbOlEF9v2A1V8PfkhmlVWTvfKjgCHWBkcG",
+                            PhoneNumber = "+1111111111",
+                            Role = 4,
                             Status = 0
                         });
                 });
@@ -627,6 +763,56 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Navigation("Service");
 
                     b.Navigation("ServiceOption");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.ConversationParticipant", b =>
+                {
+                    b.HasOne("BlossomServer.Domain.Entities.Conversation", "Conversation")
+                        .WithMany("ConversationParticipants")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ConversationParticipant_Conversation_ConversationId");
+
+                    b.HasOne("BlossomServer.Domain.Entities.User", "User")
+                        .WithMany("ConversationParticipants")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ConversationParticipant_User_UserId");
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Message", b =>
+                {
+                    b.HasOne("BlossomServer.Domain.Entities.Conversation", "Conversation")
+                        .WithMany("Messages")
+                        .HasForeignKey("ConversationId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Message_Conversation_ConversationId");
+
+                    b.HasOne("BlossomServer.Domain.Entities.User", "Recipient")
+                        .WithMany("RecipientMessages")
+                        .HasForeignKey("RecipientId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .HasConstraintName("FK_Message_User_RecipientId");
+
+                    b.HasOne("BlossomServer.Domain.Entities.User", "Sender")
+                        .WithMany("SenderMessages")
+                        .HasForeignKey("SenderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Message_User_SenderId");
+
+                    b.Navigation("Conversation");
+
+                    b.Navigation("Recipient");
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Notification", b =>
@@ -768,6 +954,13 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Navigation("Services");
                 });
 
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Conversation", b =>
+                {
+                    b.Navigation("ConversationParticipants");
+
+                    b.Navigation("Messages");
+                });
+
             modelBuilder.Entity("BlossomServer.Domain.Entities.Service", b =>
                 {
                     b.Navigation("BookingDetails");
@@ -795,11 +988,17 @@ namespace BlossomServer.Infrastructure.Migrations
                 {
                     b.Navigation("Bookings");
 
+                    b.Navigation("ConversationParticipants");
+
                     b.Navigation("Notifications");
+
+                    b.Navigation("RecipientMessages");
 
                     b.Navigation("RefreshTokens");
 
                     b.Navigation("Reviews");
+
+                    b.Navigation("SenderMessages");
 
                     b.Navigation("Technician");
                 });

@@ -18,7 +18,9 @@ namespace BlossomServer.Domain.Commands.Users.UpdateUser
         public string LastName { get; }
         public string PhoneNumber { get; }
         public IFormFile? AvatarFile { get; }
+        public IFormFile? CoverPhoto { get; }
         public Gender Gender { get; }
+        public string? Website { get; }
         public DateOnly DateOfBirth { get; }
         public UserRole Role { get; }
 
@@ -29,7 +31,9 @@ namespace BlossomServer.Domain.Commands.Users.UpdateUser
             string lastName,
             string phoneNumber,
             IFormFile? avatarFile,
+            IFormFile? coverPhoto,
             Gender gender,
+            string? website,
             DateOnly dateOfBirth,
             UserRole role
         ) : base(userId)
@@ -40,7 +44,9 @@ namespace BlossomServer.Domain.Commands.Users.UpdateUser
             LastName = lastName;
             PhoneNumber = phoneNumber;
             AvatarFile = avatarFile;
+            CoverPhoto = coverPhoto;
             Gender = gender;
+            Website = website;
             DateOfBirth = dateOfBirth;
             Role = role;
         }

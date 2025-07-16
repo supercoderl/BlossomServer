@@ -57,6 +57,9 @@ namespace BlossomServer.Infrastructure.Extensions
             services.AddScoped<IWorkScheduleRepository, WorkScheduleRepository>();
             services.AddScoped<IRefreshTokenRepository, RefreshTokenRepository>();
             services.AddScoped<IServiceOptionRepository, ServiceOptionRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IConversationRepository, ConversationRepository>();
+            services.AddScoped<IConversationParticipantRepository, ConversationParticipantRepository>();
 
             return services;
         }

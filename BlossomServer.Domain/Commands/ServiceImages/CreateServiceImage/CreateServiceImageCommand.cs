@@ -13,13 +13,13 @@ namespace BlossomServer.Domain.Commands.ServiceImages.CreateServiceImage
         private static readonly CreateServiceImageCommandValidation s_validation = new();
 
         public Guid ServiceImageId { get; }
-        public IFormFile ImageFile { get; }
+        public List<IFormFile> ImageFile { get; }
         public Guid ServiceId { get; }
         public string? Description { get; }
 
         public CreateServiceImageCommand(
             Guid serviceImageId,
-            IFormFile imageFile,
+            List<IFormFile> imageFile,
             Guid serviceId,
             string? description
         ) : base(Guid.NewGuid())

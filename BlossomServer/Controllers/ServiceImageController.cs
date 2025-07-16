@@ -1,18 +1,16 @@
 ﻿using BlossomServer.Application.Interfaces;
 using BlossomServer.Application.SortProviders;
-using BlossomServer.Application.ViewModels.Services;
-using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Application.ViewModels;
+using BlossomServer.Application.ViewModels.ServiceImages;
+using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Models;
 using BlossomServer.Swagger;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
-using BlossomServer.Application.ViewModels.ServiceImages;
 
 namespace BlossomServer.Controllers
 {
@@ -48,14 +46,14 @@ namespace BlossomServer.Controllers
             return Response(serviceImages);
         }
 
-/*        [HttpGet("{id}")]
-        [SwaggerOperation("Get a service by id")]
-        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<ServiceViewModel>))]
-        public async Task<IActionResult> GetServiceByIdAsync([FromRoute] Guid id)
-        {
-            var service = await _serviceService.GetServiceByServiceIdAsync(id);
-            return Response(service);
-        }*/
+        /*        [HttpGet("{id}")]
+                [SwaggerOperation("Get a service by id")]
+                [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<ServiceViewModel>))]
+                public async Task<IActionResult> GetServiceByIdAsync([FromRoute] Guid id)
+                {
+                    var service = await _serviceService.GetServiceByServiceIdAsync(id);
+                    return Response(service);
+                }*/
 
         [HttpPost]
         [SwaggerOperation("Create a new service image")]
@@ -66,14 +64,14 @@ namespace BlossomServer.Controllers
             return Response(serviceImageId);
         }
 
-/*        [HttpDelete("{id}")]
-        [SwaggerOperation("Delete a service")]
-        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<Guid>))]
-        public async Task<IActionResult> DeleteServiceAsync([FromRoute] Guid id)
+        [HttpPost("images")]
+        [SwaggerOperation("Delete images")]
+        [SwaggerResponse(200, "Request successful")]
+        public async Task<IActionResult> DeleteServiceAsync([FromBody] List<Guid> ids)
         {
-            await _serviceService.DeleteServiceAsync(id);
-            return Response(id);
-        }*/
+            await _serviceImageService.DeleteServiceImageAsync(ids);
+            return Response(ids);
+        }
 
         [HttpPut]
         [SwaggerOperation("Update a service image")]

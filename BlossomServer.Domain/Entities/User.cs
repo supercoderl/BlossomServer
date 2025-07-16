@@ -1,10 +1,5 @@
 ﻿using BlossomServer.Domain.Enums;
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlossomServer.Domain.Entities
 {
@@ -16,13 +11,17 @@ namespace BlossomServer.Domain.Entities
         public string Email { get; private set; }
         public string PhoneNumber { get; private set; }
         public string AvatarUrl { get; private set; }
+        public string? CoverPhotoUrl { get; private set; }
         public Gender Gender { get; private set; }
+        public string? Website { get; private set; }
         public DateOnly DateOfBirth { get; private set; }
         public UserRole Role { get; private set; }
         public UserStatus Status { get; private set; }
         public DateTimeOffset? LastLoggedinDate { get; private set; }
 
         public string FullName => $"{FirstName}, {LastName}";
+
+        public bool IsBot => Role == UserRole.Bot;
 
         [InverseProperty("User")]
         public virtual ICollection<Notification> Notifications { get; set; } = new List<Notification>();
@@ -39,15 +38,26 @@ namespace BlossomServer.Domain.Entities
         [InverseProperty("Customer")]
         public virtual ICollection<Booking> Bookings { get; set; } = new List<Booking>();
 
+        [InverseProperty("Sender")]
+        public virtual ICollection<Message> SenderMessages { get; set; } = new List<Message>();
+
+        [InverseProperty("Recipient")]
+        public virtual ICollection<Message> RecipientMessages { get; set; } = new List<Message>();
+
+        [InverseProperty("User")]
+        public virtual ICollection<ConversationParticipant> ConversationParticipants { get; set; } = new List<ConversationParticipant>();
+
         public User(
-            Guid id, 
-            string password, 
+            Guid id,
+            string password,
             string firstName,
             string lastName,
-            string email, 
+            string email,
             string phoneNumber,
             string avatarUrl,
+            string? coverPhotoUrl,
             Gender gender,
+            string? website,
             DateOnly dateOfBirth,
             UserRole role,
             UserStatus status = UserStatus.Active
@@ -59,7 +69,9 @@ namespace BlossomServer.Domain.Entities
             Email = email;
             PhoneNumber = phoneNumber;
             AvatarUrl = avatarUrl;
+            CoverPhotoUrl = coverPhotoUrl;
             Gender = gender;
+            Website = website;
             DateOfBirth = dateOfBirth;
             Role = role;
             Status = status;
@@ -69,7 +81,7 @@ namespace BlossomServer.Domain.Entities
         {
             Password = password;
         }
-        
+
         public void SetFirstName(string firstName)
         {
             FirstName = firstName;
@@ -107,7 +119,11 @@ namespace BlossomServer.Domain.Entities
 
         public void SetAvatarUrl(string avatarUrl) { AvatarUrl = avatarUrl; }
 
+        public void SetCoverPhotoUrl(string? coverPhotoUrl) { CoverPhotoUrl = coverPhotoUrl; }
+
         public void SetGender(Gender gender) { Gender = gender; }
+
+        public void SetWebsite(string? website) { Website = website; }
 
         public void SetDateOfBirth(DateOnly dateOfBirth) { DateOfBirth = dateOfBirth; }
 

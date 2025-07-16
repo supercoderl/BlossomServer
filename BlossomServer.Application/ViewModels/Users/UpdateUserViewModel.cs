@@ -15,7 +15,9 @@ namespace BlossomServer.Application.ViewModels.Users
         string LastName,
         string PhoneNumber,
         IFormFile? AvatarFile,
+        IFormFile? CoverPhoto,
         Gender Gender,
+        string? Website,
         DateOnly DateOfBirth,
         UserRole Role
     );

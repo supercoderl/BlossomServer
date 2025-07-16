@@ -50,6 +50,7 @@ namespace BlossomServer.Domain.Errors
             // Service Image Validation
             public const string EmptyId = "SERVICE_IMAGE_EMPTY_ID";
             public const string EmptyName = "SERVICE_IMAGE_EMPTY_NAME";
+            public const string EmptyConnectionId = "SERVICE_IMAGE_EMPTY_CONNECTION_ID";
         }
 
         public static class ServiceOption
@@ -57,6 +58,12 @@ namespace BlossomServer.Domain.Errors
             // Service Option Validation
             public const string EmptyId = "SERVICE_OPTION_EMPTY_ID";
             public const string EmptyVariantName = "SERVICE_OPTION_EMPTY_NAME";
+        }
+
+        public static class Booking
+        {
+            // Booking Validation
+            public const string EmptyId = "BOOKING_EMPTY_ID";
         }
     }
 }

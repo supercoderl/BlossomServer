@@ -6,6 +6,7 @@ using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Bookings;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Commands.Bookings.CreateBooking;
+using BlossomServer.Domain.Commands.Bookings.UpdateBookingStatus;
 using BlossomServer.Domain.Interfaces;
 
 namespace BlossomServer.Application.Services
@@ -59,6 +60,11 @@ namespace BlossomServer.Application.Services
         public async Task<BookingViewModel?> GetBookingByBookingIdAsync(Guid bookingId)
         {
             return await _bus.QueryAsync(new GetBookingByIdQuery(bookingId));
+        }
+
+        public async Task UpdateBookingStatusAsync(UpdateBookingStatusViewModel booking)
+        {
+            await _bus.SendCommandAsync(new UpdateBookingStatusCommand(booking.Id, booking.Status));
         }
     }
 }

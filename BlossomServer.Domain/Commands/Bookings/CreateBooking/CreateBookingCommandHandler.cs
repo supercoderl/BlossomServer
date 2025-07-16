@@ -3,6 +3,7 @@ using BlossomServer.Domain.Errors;
 using BlossomServer.Domain.Interfaces;
 using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Domain.Notifications;
+using BlossomServer.Shared.Events.Admin;
 using BlossomServer.Shared.Events.Booking;
 using BlossomServer.SharedKernel.Utils;
 using MediatR;
@@ -60,6 +61,7 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
             if(await CommitAsync())
             {
                 await Bus.RaiseEventAsync(new BookingCreatedEvent(booking.Id));
+                await Bus.RaiseEventAsync(new AdminNotificationRequiredEvent("You have a new booking!"));
                 await Bus.SendCommandAsync(new CreateBookingDetailCommand(
                     Guid.NewGuid(),
                     booking.Id,

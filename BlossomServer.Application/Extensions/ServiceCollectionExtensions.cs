@@ -1,45 +1,49 @@
-﻿using BlossomServer.Application.Interfaces;
+﻿using BlossomServer.Application.EventHandler;
+using BlossomServer.Application.Interfaces;
+using BlossomServer.Application.Queries.Bookings.GetAll;
+using BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician;
+using BlossomServer.Application.Queries.Bookings.GetById;
+using BlossomServer.Application.Queries.Categories.GetAll;
+using BlossomServer.Application.Queries.Categories.GetById;
+using BlossomServer.Application.Queries.Messages.CheckBot;
+using BlossomServer.Application.Queries.Messages.FindConversation;
+using BlossomServer.Application.Queries.Messages.GetAll;
+using BlossomServer.Application.Queries.Payments.GetAll;
+using BlossomServer.Application.Queries.Promotions.CheckByCode;
+using BlossomServer.Application.Queries.Promotions.GetAll;
+using BlossomServer.Application.Queries.Promotions.GetById;
+using BlossomServer.Application.Queries.Reviews.GetAll;
+using BlossomServer.Application.Queries.Reviews.GetById;
+using BlossomServer.Application.Queries.ServiceImages.GetAll;
+using BlossomServer.Application.Queries.Services.GetAll;
+using BlossomServer.Application.Queries.Services.GetById;
+using BlossomServer.Application.Queries.Technicians.GetAll;
+using BlossomServer.Application.Queries.Technicians.GetById;
 using BlossomServer.Application.Queries.Users.GetAll;
 using BlossomServer.Application.Queries.Users.GetById;
+using BlossomServer.Application.Queries.WorkSchedules.GetAll;
+using BlossomServer.Application.Queries.WorkSchedules.GetById;
 using BlossomServer.Application.Services;
 using BlossomServer.Application.SortProviders;
-using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Application.ViewModels;
+using BlossomServer.Application.ViewModels.Bookings;
+using BlossomServer.Application.ViewModels.Categories;
+using BlossomServer.Application.ViewModels.Messages;
+using BlossomServer.Application.ViewModels.Payments;
+using BlossomServer.Application.ViewModels.Promotions;
+using BlossomServer.Application.ViewModels.Reviews;
+using BlossomServer.Application.ViewModels.ServiceImages;
+using BlossomServer.Application.ViewModels.Services;
+using BlossomServer.Application.ViewModels.Sorting;
+using BlossomServer.Application.ViewModels.Technicians;
+using BlossomServer.Application.ViewModels.Users;
+using BlossomServer.Application.ViewModels.WorkSchedules;
+using BlossomServer.Domain.Entities;
+using BlossomServer.Shared.Events.Admin;
+using BlossomServer.Shared.Events.Message;
+using BlossomServer.Shared.Events.ServiceImage;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using BlossomServer.Application.ViewModels.Users;
-using BlossomServer.Domain.Entities;
-using BlossomServer.Application.Queries.Bookings.GetById;
-using BlossomServer.Application.Queries.Bookings.GetAll;
-using BlossomServer.Application.ViewModels.Bookings;
-using BlossomServer.Application.Queries.Categories.GetById;
-using BlossomServer.Application.Queries.Categories.GetAll;
-using BlossomServer.Application.ViewModels.Categories;
-using BlossomServer.Application.Queries.Promotions.GetById;
-using BlossomServer.Application.Queries.Promotions.GetAll;
-using BlossomServer.Application.ViewModels.Promotions;
-using BlossomServer.Application.Queries.Reviews.GetById;
-using BlossomServer.Application.ViewModels.Reviews;
-using BlossomServer.Application.Queries.Reviews.GetAll;
-using BlossomServer.Application.Queries.Services.GetById;
-using BlossomServer.Application.ViewModels.Services;
-using BlossomServer.Application.Queries.Services.GetAll;
-using BlossomServer.Application.Queries.Technicians.GetById;
-using BlossomServer.Application.ViewModels.Technicians;
-using BlossomServer.Application.Queries.Technicians.GetAll;
-using BlossomServer.Application.Queries.WorkSchedules.GetById;
-using BlossomServer.Application.Queries.WorkSchedules.GetAll;
-using BlossomServer.Application.ViewModels.WorkSchedules;
-using BlossomServer.Application.Queries.ServiceImages.GetAll;
-using BlossomServer.Application.ViewModels.ServiceImages;
-using BlossomServer.Application.Queries.Payments.GetAll;
-using BlossomServer.Application.ViewModels.Payments;
-using BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician;
 
 namespace BlossomServer.Application.Extensions
 {
@@ -59,6 +63,8 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<IPaymentService, PaymentService>();
             services.AddScoped<IServiceOptionService, ServiceOptionService>();
             services.AddScoped<IFileService, FileService>();
+            services.AddScoped<ISignalRService, SignalRService>();
+            services.AddScoped<IMessageService, MessageService>();
 
             return services;
         }
@@ -81,6 +87,7 @@ namespace BlossomServer.Application.Extensions
             // Promotion
             services.AddScoped<IRequestHandler<GetPromotionByIdQuery, PromotionViewModel?>, GetPromotionByIdQueryHandler>();
             services.AddScoped<IRequestHandler<GetAllPromotionsQuery, PagedResult<PromotionViewModel>>, GetAllPromotionsQueryHandler>();
+            services.AddScoped<IRequestHandler<CheckPromotionByCodeQuery, object>, CheckPromotionByCodeQueryHandler>();
 
             // Review
             services.AddScoped<IRequestHandler<GetReviewByIdQuery, ReviewViewModel?>, GetReviewByIdQueryHandler>();
@@ -104,6 +111,11 @@ namespace BlossomServer.Application.Extensions
             // Payment
             services.AddScoped<IRequestHandler<GetAllPaymentsQuery, PagedResult<PaymentViewModel>>, GetAllPaymentsQueryHandler>();
 
+            // Messages
+            services.AddScoped<IRequestHandler<CheckBotQuery, bool>, CheckBotQueryHandler>();
+            services.AddScoped<IRequestHandler<FindConversationIdQuery, Guid>, FindConversationIdQueryHandler>();
+            services.AddScoped<IRequestHandler<GetAllMessagesQuery, PagedResult<MessageViewModel>>, GetAllMessagesQueryHandler>();
+
             return services;
         }
 
@@ -119,6 +131,22 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<ISortingExpressionProvider<WorkScheduleViewModel, WorkSchedule>, WorkScheduleViewModelSortProvider>();
             services.AddScoped<ISortingExpressionProvider<ServiceImageViewModel, ServiceImage>, ServiceImageViewModelSortProvider>();
             services.AddScoped<ISortingExpressionProvider<PaymentViewModel, Payment>, PaymentViewModelSortProvider>();
+            services.AddScoped<ISortingExpressionProvider<MessageViewModel, Message>, MessageViewModelSortProvider>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddNotificationHandlersApplication(this IServiceCollection services)
+        {
+            // Service Image
+            services.AddScoped<INotificationHandler<ServiceImageCreatedEvent>, ServiceImageEventHandler>();
+            services.AddScoped<INotificationHandler<ServiceImageUploadProgressEvent>, ServiceImageEventHandler>();
+
+            // Admin
+            services.AddScoped<INotificationHandler<AdminNotificationRequiredEvent>, AdminNotificationRequiredEventHandler>();
+
+            // Message
+            services.AddScoped<INotificationHandler<MessageAnswerEvent>, MessageAnswerEventHandler>();
 
             return services;
         }

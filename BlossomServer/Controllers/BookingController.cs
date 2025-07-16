@@ -98,5 +98,14 @@ namespace BlossomServer.Controllers
             await _bookingService.DeleteBookingAsync(id);
             return Response(id);
         }
+
+        [HttpPut("status")]
+        [SwaggerOperation("Update a booking status")]
+        [SwaggerResponse(200, "Request successful")]
+        public async Task<IActionResult> UpdateBookingStatusAsync([FromBody] UpdateBookingStatusViewModel viewModel)
+        {
+            await _bookingService.UpdateBookingStatusAsync(viewModel);
+            return Response(viewModel);
+        }
     }
 }

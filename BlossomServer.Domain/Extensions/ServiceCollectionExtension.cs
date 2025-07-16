@@ -1,10 +1,15 @@
 ﻿using BlossomServer.Domain.Commands.BookingDetails.CreateBookingDetail;
 using BlossomServer.Domain.Commands.Bookings.CreateBooking;
 using BlossomServer.Domain.Commands.Bookings.UpdateBooking;
+using BlossomServer.Domain.Commands.Bookings.UpdateBookingStatus;
 using BlossomServer.Domain.Commands.Categories.CreateCategory;
 using BlossomServer.Domain.Commands.Categories.DeleteCategory;
 using BlossomServer.Domain.Commands.Categories.UpdateCategory;
+using BlossomServer.Domain.Commands.ConversationParticipants.CreateConversationParticipant;
+using BlossomServer.Domain.Commands.Conversations.CreateConversation;
 using BlossomServer.Domain.Commands.Files.UploadFile;
+using BlossomServer.Domain.Commands.Messages.CreateMessage;
+using BlossomServer.Domain.Commands.Messages.DeleteMessage;
 using BlossomServer.Domain.Commands.Notifications.CreateNotification;
 using BlossomServer.Domain.Commands.Notifications.DeleteNotification;
 using BlossomServer.Domain.Commands.Notifications.UpdateStatusNotification;
@@ -18,6 +23,7 @@ using BlossomServer.Domain.Commands.Reviews.CreateReview;
 using BlossomServer.Domain.Commands.Reviews.DeleteReview;
 using BlossomServer.Domain.Commands.Reviews.UpdateReview;
 using BlossomServer.Domain.Commands.ServiceImages.CreateServiceImage;
+using BlossomServer.Domain.Commands.ServiceImages.DeleteServiceImage;
 using BlossomServer.Domain.Commands.ServiceImages.UpdateServiceImage;
 using BlossomServer.Domain.Commands.ServiceOptions.CreateServiceOption;
 using BlossomServer.Domain.Commands.ServiceOptions.DeleteServiceOption;
@@ -40,11 +46,12 @@ using BlossomServer.Domain.Commands.WorkSchedules.UpdateWorkSchedule;
 using BlossomServer.Domain.EventHandler;
 using BlossomServer.Domain.EventHandler.Fanout;
 using BlossomServer.Domain.Interfaces;
-using BlossomServer.Domain.Settings;
+using BlossomServer.Shared.Events.ServiceImage;
 using BlossomServer.Shared.Events.User;
 using MediatR;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
 
 namespace BlossomServer.Domain.Extensions
 {
@@ -63,6 +70,7 @@ namespace BlossomServer.Domain.Extensions
             // Booking
             services.AddScoped<IRequestHandler<CreateBookingCommand>, CreateBookingCommandHandler>();
             services.AddScoped<IRequestHandler<UpdateBookingCommand>, UpdateBookingCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdateBookingStatusCommand>, UpdateBookingStatusCommandHandler>();
 
             // Category
             services.AddScoped<IRequestHandler<CreateCategoryCommand>, CreateCategoryCommandHandler>();
@@ -91,6 +99,7 @@ namespace BlossomServer.Domain.Extensions
             // Service Images
             services.AddScoped<IRequestHandler<CreateServiceImageCommand>, CreateServiceImageCommandHandler>();
             services.AddScoped<IRequestHandler<UpdateServiceImageCommand>, UpdateServiceImageCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteServiceImageCommand>, DeleteServiceImageCommandHandler>();
 
             // Service
             services.AddScoped<IRequestHandler<CreateServiceCommand>, CreateServiceCommandHandler>();
@@ -121,6 +130,16 @@ namespace BlossomServer.Domain.Extensions
             // Booking Details
             services.AddScoped<IRequestHandler<CreateBookingDetailCommand>, CreateBookingDetailCommandHandler>();
 
+            // Messages
+            services.AddScoped<IRequestHandler<CreateMessageCommand>, CreateMessageCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteMessageCommand>, DeleteMessageCommandHandler>();
+
+            // Conversations
+            services.AddScoped<IRequestHandler<CreateConversationCommand>, CreateConversationCommandHandler>();
+
+            // ConversationParticipants
+            services.AddScoped<IRequestHandler<CreateConversationParticipantCommand>, CreateConversationParticipantCommandHandler>();
+
             return services;
         }
 
@@ -135,6 +154,10 @@ namespace BlossomServer.Domain.Extensions
             services.AddScoped<INotificationHandler<UserDeletedEvent>, UserEventHandler>();
             /*            services.AddScoped<INotificationHandler<PasswordChangedEvent>, UserEventHandler>();*/
 
+            // Service Image
+            services.AddScoped<INotificationHandler<ServiceImageCreatedEvent>, ServiceImageDomainEventHandler>();
+            services.AddScoped<INotificationHandler<ServiceImageUploadProgressEvent>, ServiceImageDomainEventHandler>();
+
             return services;
         }
 
@@ -146,24 +169,13 @@ namespace BlossomServer.Domain.Extensions
             return services;
         }
 
-        public static IServiceCollection AddBunnyCDN(this IServiceCollection services, IConfiguration configuration)
+        public static OptionsBuilder<T> AddSettings<T>(this IServiceCollection services, IConfiguration configuration, string sectionName)
+            where T : class
         {
-            services
-                .AddOptions<BunnyCDNSettings>()
-                .Bind(configuration.GetSection("BunnyCDN"))
+            return services
+                .AddOptions<T>()
+                .Bind(configuration.GetSection(sectionName))
                 .ValidateOnStart();
-
-            return services;
-        }
-
-        public static IServiceCollection AddImageKit(this IServiceCollection services, IConfiguration configuration)
-        {
-            services
-                .AddOptions<ImageKitSettings>()
-                .Bind(configuration.GetSection("ImageKit"))
-                .ValidateOnStart();
-
-            return services;
         }
     }
 }

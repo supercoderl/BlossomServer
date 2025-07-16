@@ -7,6 +7,7 @@ namespace BlossomServer.Application.Interfaces
     public interface IPromotionService
     {
         public Task<PromotionViewModel?> GetPromotionByPromotionIdAsync(Guid promotionId);
+        public Task<object> CheckPromotionAsync(string code);
 
         public Task<PagedResult<PromotionViewModel>> GetAllPromotionsAsync(
             PageQuery query,

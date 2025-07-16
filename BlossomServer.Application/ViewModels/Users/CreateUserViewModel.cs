@@ -15,6 +15,7 @@ namespace BlossomServer.Application.ViewModels.Users
         string Password,
         string PhoneNumber,
         Gender Gender,
+        string Website,
         DateOnly DateOfBirth,
         UserRole Role
     );

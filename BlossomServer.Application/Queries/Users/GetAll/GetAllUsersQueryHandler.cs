@@ -36,9 +36,9 @@ namespace BlossomServer.Application.Queries.Users.GetAll
             if (!string.IsNullOrWhiteSpace(request.SearchTerm))
             {
                 usersQuery = usersQuery.Where(user =>
-                    user.Email.Contains(request.SearchTerm) ||
-                    user.FirstName.Contains(request.SearchTerm) ||
-                    user.LastName.Contains(request.SearchTerm));
+                    EF.Functions.Like(user.Email, $"%{request.SearchTerm}%") ||
+                    EF.Functions.Like(user.FirstName, $"%{request.SearchTerm}%") ||
+                    EF.Functions.Like(user.LastName, $"%{request.SearchTerm}%"));
             }
 
             var totalCount = await usersQuery.CountAsync(cancellationToken);
@@ -48,7 +48,7 @@ namespace BlossomServer.Application.Queries.Users.GetAll
             var users = await usersQuery
                 .Skip((request.Query.Page - 1) * request.Query.PageSize)
                 .Take(request.Query.PageSize)
-                .Select(user => UserViewModel.FromUser(user))
+                .Select(user => UserViewModel.FromUser(user, "web", null, null))
                 .ToListAsync(cancellationToken);
 
             return new PagedResult<UserViewModel>(

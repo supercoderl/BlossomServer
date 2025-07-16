@@ -56,7 +56,9 @@ namespace BlossomServer.Application.Services
                 user.Password,
                 user.PhoneNumber,
                 "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSvuBGQpwoDKnv2asTcJdE7YqEtovBNUUL2hQ&s",
+                null,
                 user.Gender,
+                user.Website,
                 user.DateOfBirth,
                 user.Role
             ));
@@ -73,7 +75,9 @@ namespace BlossomServer.Application.Services
                 user.LastName,
                 user.PhoneNumber,
                 user.AvatarFile,
+                user.CoverPhoto,
                 user.Gender,
+                user.Website,
                 user.DateOfBirth,
                 user.Role
             ));

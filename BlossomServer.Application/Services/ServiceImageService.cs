@@ -4,6 +4,7 @@ using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.ServiceImages;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Commands.ServiceImages.CreateServiceImage;
+using BlossomServer.Domain.Commands.ServiceImages.DeleteServiceImage;
 using BlossomServer.Domain.Commands.ServiceImages.UpdateServiceImage;
 using BlossomServer.Domain.Interfaces;
 using System;
@@ -35,6 +36,14 @@ namespace BlossomServer.Application.Services
                 serviceImage.Description
             ));
             return imageId;
+        }
+
+        public async Task DeleteServiceImageAsync(List<Guid> serviceImageIds)
+        {
+            foreach (var id in serviceImageIds)
+            {
+                await _bus.SendCommandAsync(new DeleteServiceImageCommand(id));
+            }
         }
 
         public async Task<PagedResult<ServiceImageViewModel>> GetAllServiceImagesAsync(PageQuery query, bool includeDeleted, string searchTerm = "", SortQuery? sortQuery = null)

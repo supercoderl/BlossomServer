@@ -17,13 +17,18 @@ namespace BlossomServer.Application.ViewModels.Users
         public string LastName { get; set; } = string.Empty;
         public string PhoneNumber {  get; set; } = string.Empty;
         public string AvatarUrl { get; set; } = string.Empty;
+        public string? CoverPhotoUrl { get; set; }
         public Gender Gender { get; set; }
+        public string? Website { get; set; }
         public UserRole Role { get; set; }
         public UserStatus Status { get; set; }
         public DateOnly DateOfBirth { get; set; }   
         public TechnicianViewModel? TechnicianInfo { get; set; }
+        public string? Device { get; set; }
+        public Guid? CurrentRoomId { get; set; }
+        public string? ConnectionId { get; set; }
 
-        public static UserViewModel FromUser(User user)
+        public static UserViewModel FromUser(User user, string? device, Guid? currentRoomId, string? connectionId)
         {
             return new UserViewModel
             {
@@ -33,11 +38,16 @@ namespace BlossomServer.Application.ViewModels.Users
                 LastName = user.LastName,
                 PhoneNumber = user.PhoneNumber,
                 AvatarUrl = user.AvatarUrl,
+                CoverPhotoUrl = user.CoverPhotoUrl,
                 Gender = user.Gender,
+                Website = user.Website,
                 Role = user.Role,
                 Status = user.Status,
                 DateOfBirth = user.DateOfBirth,
-                TechnicianInfo = user.Technician != null ? TechnicianViewModel.FromTechnician(user.Technician) : null
+                TechnicianInfo = user.Technician != null ? TechnicianViewModel.FromTechnician(user.Technician) : null,
+                Device = device,
+                CurrentRoomId = currentRoomId,
+                ConnectionId = connectionId
             };
         }
     }

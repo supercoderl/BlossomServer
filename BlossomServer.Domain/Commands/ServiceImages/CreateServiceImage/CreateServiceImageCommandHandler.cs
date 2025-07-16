@@ -4,11 +4,6 @@ using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Shared.Events.ServiceImage;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlossomServer.Domain.Commands.ServiceImages.CreateServiceImage
 {
@@ -30,25 +25,41 @@ namespace BlossomServer.Domain.Commands.ServiceImages.CreateServiceImage
         {
             if (!await TestValidityAsync(request)) return;
 
-            var url = await Bus.QueryAsync(new UploadFileCommand(
-                request.ImageFile,
-                null,
-                false
-            ));
+            List<Entities.ServiceImage> serviceImages = new List<Entities.ServiceImage>();
 
-            var serviceImage = new Entities.ServiceImage(
-                request.ServiceImageId,
-                request.ImageFile.FileName,
-                url,
-                request.ServiceId,
-                request.Description
-            );
+            int total = request.ImageFile.Count;
 
-            _serviceImageRepository.Add(serviceImage);
+            for (int i = 0; i < total; i++)
+            {
+                var file = request.ImageFile[i];
+
+                var url = await Bus.QueryAsync(new UploadFileCommand(file, null, false));
+                var serviceImage = new Entities.ServiceImage(
+                    request.ServiceImageId,
+                    file.FileName,
+                    url,
+                    request.ServiceId,
+                    request.Description
+                );
+
+                serviceImages.Add(serviceImage);
+
+                int percent = (int)(((i + 1) / (double)total) * 100);
+
+                await Bus.RaiseEventAsync(new ServiceImageUploadProgressEvent(
+                    request.ServiceId,
+                    percent,
+                    i + 1,
+                    total,
+                    file.FileName
+                ));
+            }
+
+            _serviceImageRepository.AddRange(serviceImages);
 
             if(await CommitAsync())
             {
-                await Bus.RaiseEventAsync(new ServiceImageCreatedEvent(serviceImage.Id));
+                await Bus.RaiseEventAsync(new ServiceImageCreatedEvent(request.ServiceId));
             }
         }
     }

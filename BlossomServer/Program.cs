@@ -1,10 +1,13 @@
-using System;
 using Aikido.Zen.DotNetCore;
-/*using BlossomServer.BackgroundServices;*/
-using BlossomServer.Extensions;
 using BlossomServer.Application.Extensions;
 using BlossomServer.Application.gRPC;
+using BlossomServer.Application.Hubs;
+using BlossomServer.Domain.Consumers;
 using BlossomServer.Domain.Extensions;
+using BlossomServer.Domain.Settings;
+
+/*using BlossomServer.BackgroundServices;*/
+using BlossomServer.Extensions;
 using BlossomServer.Infrastructure.Database;
 using BlossomServer.Infrastructure.Extensions;
 using BlossomServer.ServiceDefaults;
@@ -14,8 +17,6 @@ using MassTransit;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
-using RabbitMQ.Client;
-using BlossomServer.Domain.Consumers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -74,14 +75,16 @@ builder.Services.AddSortProviders();
 builder.Services.AddCommandHandlers();
 builder.Services.AddNotificationHandlers();
 builder.Services.AddApiUser();
-builder.Services.AddBunnyCDN(builder.Configuration);
-builder.Services.AddImageKit(builder.Configuration);
 builder.Services.AddHttpClient();
+builder.Services.AddNotificationHandlersApplication();
+builder.Services.AddSettings<BunnyCDNSettings>(builder.Configuration, "BunnyCDN");
+builder.Services.AddSettings<ImageKitSettings>(builder.Configuration, "ImageKit");
+builder.Services.AddSettings<GroqSettings>(builder.Configuration, "Groq");
 
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<FanoutEventConsumer>();
-/*    x.AddConsumer<TenantUpdatedEventConsumer>();*/
+    /*    x.AddConsumer<TenantUpdatedEventConsumer>();*/
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -99,7 +102,8 @@ builder.Services.AddMassTransit(x =>
             return settings;
         });
 
-        cfg.Host(rabbitConfiguration.Host, (ushort)rabbitConfiguration.Port, rabbitConfiguration.VirtualHost, h => {
+        cfg.Host(rabbitConfiguration.Host, (ushort)rabbitConfiguration.Port, rabbitConfiguration.VirtualHost, h =>
+        {
             h.Username(rabbitConfiguration.Username);
             h.Password(rabbitConfiguration.Password);
         });
@@ -112,11 +116,11 @@ builder.Services.AddMassTransit(x =>
             e.ConfigureConsumer<FanoutEventConsumer>(context);
             e.DiscardSkippedMessages();
         });
-/*        cfg.ReceiveEndpoint("clean-architecture-fanout-events", e =>
-        {
-            e.ConfigureConsumer<TenantUpdatedEventConsumer>(context);
-            e.DiscardSkippedMessages();
-        });*/
+        /*        cfg.ReceiveEndpoint("clean-architecture-fanout-events", e =>
+                {
+                    e.ConfigureConsumer<TenantUpdatedEventConsumer>(context);
+                    e.DiscardSkippedMessages();
+                });*/
         cfg.ConfigureEndpoints(context);
     });
 });
@@ -129,7 +133,9 @@ builder.Services.AddLogging(x => x.AddSimpleConsole(console =>
     console.IncludeScopes = true;
 }));
 
-if(builder.Environment.IsProduction() || !string.IsNullOrWhiteSpace(redisConnectionString))
+builder.Services.AddSignalR();
+
+if (builder.Environment.IsProduction() || !string.IsNullOrWhiteSpace(redisConnectionString))
 {
     builder.Services.AddStackExchangeRedisCache(options =>
     {
@@ -146,7 +152,7 @@ var app = builder.Build();
 
 app.MapDefaultEndpoints();
 
-using(var scope = app.Services.CreateScope())
+using (var scope = app.Services.CreateScope())
 {
     var service = scope.ServiceProvider;
     var appDbContext = service.GetRequiredService<ApplicationDbContext>();
@@ -169,7 +175,7 @@ app.UseCors("policy");
 app.UseAuthentication();
 app.UseAuthorization();
 
-if(builder.Environment.IsProduction())
+if (builder.Environment.IsProduction())
 {
     app.UseZenFirewall();
 }
@@ -181,6 +187,8 @@ app.MapHealthChecks("/healthz", new HealthCheckOptions
 
 app.MapControllers();
 app.MapGrpcService<UsersApiImplementation>();
+
+app.MapHub<TrackerHub>("/trackerHub");
 
 await app.RunAsync();
 //app.Run("http://0.0.0.0:80"); Change port here to EXPOSE in docker

@@ -65,7 +65,9 @@ namespace BlossomServer.Domain.Commands.Users.CreateUser
                 request.Email,
                 request.PhoneNumber,
                 request.AvatarUrl,
+                request.CoverPhotoUrl,
                 request.Gender,
+                request.Website,
                 request.DateOfBirth,
                 request.Role
             );

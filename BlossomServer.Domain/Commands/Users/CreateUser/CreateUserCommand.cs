@@ -18,7 +18,9 @@ namespace BlossomServer.Domain.Commands.Users.CreateUser
         public string Password { get; }
         public string PhoneNumber { get; }
         public string AvatarUrl { get; }
+        public string? CoverPhotoUrl { get; }
         public Gender Gender { get; }
+        public string? Website { get; }
         public DateOnly DateOfBirth { get; }
         public UserRole Role { get; }
 
@@ -30,7 +32,9 @@ namespace BlossomServer.Domain.Commands.Users.CreateUser
             string password,
             string phoneNumber,
             string avatarUrl,
+            string? coverPhotoUrl,
             Gender gender,
+            string? website,
             DateOnly dateOfBirth,
             UserRole role
         ) : base(userId)
@@ -42,7 +46,9 @@ namespace BlossomServer.Domain.Commands.Users.CreateUser
             Password = password;
             PhoneNumber = phoneNumber;
             AvatarUrl = avatarUrl;
+            CoverPhotoUrl = coverPhotoUrl;
             Gender = gender;
+            Website = website;
             DateOfBirth = dateOfBirth;
             Role = role;
         }

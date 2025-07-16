@@ -19,6 +19,7 @@ namespace BlossomServer.Application.Interfaces
         );
 
         public Task<Guid> CreateBookingAsync(CreateBookingViewModel booking);
+        public Task UpdateBookingStatusAsync(UpdateBookingStatusViewModel booking);
         public Task DeleteBookingAsync(Guid bookingId);
     }
 }

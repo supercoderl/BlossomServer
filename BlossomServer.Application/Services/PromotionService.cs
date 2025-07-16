@@ -1,4 +1,5 @@
 ﻿using BlossomServer.Application.Interfaces;
+using BlossomServer.Application.Queries.Promotions.CheckByCode;
 using BlossomServer.Application.Queries.Promotions.GetAll;
 using BlossomServer.Application.Queries.Promotions.GetById;
 using BlossomServer.Application.ViewModels;
@@ -18,6 +19,11 @@ namespace BlossomServer.Application.Services
         public PromotionService(IMediatorHandler bus)
         {
             _bus = bus;
+        }
+
+        public async Task<object> CheckPromotionAsync(string code)
+        {
+            return await _bus.QueryAsync(new CheckPromotionByCodeQuery(code));
         }
 
         public async Task<Guid> CreatePromotionAsync(CreatePromotionViewModel promotion)

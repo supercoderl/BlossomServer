@@ -8,7 +8,7 @@ namespace BlossomServer.Shared.Events.ServiceImage
 {
     public sealed class ServiceImageCreatedEvent : DomainEvent
     {
-        public ServiceImageCreatedEvent(Guid serviceImageId) : base(serviceImageId)
+        public ServiceImageCreatedEvent(Guid serviceId) : base(serviceId)
         {
             
         }

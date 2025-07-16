@@ -9,5 +9,6 @@ namespace BlossomServer.Domain.Interfaces.Repositories
 {
     public interface IPromotionRepository : IRepository<Promotion, Guid>
     {
+        Task<Promotion?> CheckByCode(string code);
     }
 }

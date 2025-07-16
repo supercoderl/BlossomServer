@@ -14,5 +14,6 @@ namespace BlossomServer.Application.Interfaces
 
         public Task<Guid> CreateServiceImageAsync(CreateServiceImageViewModel serviceImage);
         public Task<UpdateServiceImageViewModel> UpdateServiceImageAsync(UpdateServiceImageViewModel serviceImage);
+        public Task DeleteServiceImageAsync(List<Guid> serviceImageIds);
     }
 }

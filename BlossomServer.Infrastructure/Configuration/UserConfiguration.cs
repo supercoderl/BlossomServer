@@ -41,9 +41,27 @@ namespace BlossomServer.Infrastructure.Configuration
                 "admin@gmail.com",
                 "+1586324954",
                 "https://haamc.offerslokam.com/wp-content/uploads/2023/09/client-dummy-Google-Search-1.png",
+                null,
                 Domain.Enums.Gender.Male,
+                null,
                 DateOnly.FromDateTime(TimeZoneHelper.GetLocalTimeNow()),
                 Domain.Enums.UserRole.Admin,
+                Domain.Enums.UserStatus.Active
+            ));
+
+            builder.HasData(new User(
+                Ids.Seed.BotId,
+                BCrypt.Net.BCrypt.HashPassword("123456"),
+                "Bot",
+                "System",
+                "bot@nblossom.com",
+                "+1111111111",
+                "https://avatars.githubusercontent.com/u/6422482?v=4",
+                null,
+                Domain.Enums.Gender.Unknow,
+                null,
+                DateOnly.FromDateTime(TimeZoneHelper.GetLocalTimeNow()),
+                Domain.Enums.UserRole.Bot,
                 Domain.Enums.UserStatus.Active
             ));
         }

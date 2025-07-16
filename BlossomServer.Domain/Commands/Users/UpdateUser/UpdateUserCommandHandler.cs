@@ -76,7 +76,18 @@ namespace BlossomServer.Domain.Commands.Users.UpdateUser
                 user.SetAvatarUrl(url);
             }
 
+            if (request.CoverPhoto != null)
+            {
+                string url = await Bus.QueryAsync(new UploadFileCommand(
+                    request.CoverPhoto,
+                    null,
+                    false
+                ));
+                user.SetCoverPhotoUrl(url);
+            }
+
             user.SetGender(request.Gender);
+            user.SetWebsite(request.Website);
             user.SetDateOfBirth(request.DateOfBirth);
             user.SetRole(request.Role);
 
