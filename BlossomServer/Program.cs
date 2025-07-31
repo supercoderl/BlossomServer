@@ -80,6 +80,8 @@ builder.Services.AddNotificationHandlersApplication();
 builder.Services.AddSettings<BunnyCDNSettings>(builder.Configuration, "BunnyCDN");
 builder.Services.AddSettings<ImageKitSettings>(builder.Configuration, "ImageKit");
 builder.Services.AddSettings<GroqSettings>(builder.Configuration, "Groq");
+builder.Services.AddSettings<TwillioSettings>(builder.Configuration, "Twillio");
+builder.Services.AddSettings<MailSettings>(builder.Configuration, "EmailConfiguration");
 
 builder.Services.AddMassTransit(x =>
 {

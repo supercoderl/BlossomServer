@@ -8,6 +8,7 @@ using BlossomServer.Domain.Commands.Categories.UpdateCategory;
 using BlossomServer.Domain.Commands.ConversationParticipants.CreateConversationParticipant;
 using BlossomServer.Domain.Commands.Conversations.CreateConversation;
 using BlossomServer.Domain.Commands.Files.UploadFile;
+using BlossomServer.Domain.Commands.Mails.SendMail;
 using BlossomServer.Domain.Commands.Messages.CreateMessage;
 using BlossomServer.Domain.Commands.Messages.DeleteMessage;
 using BlossomServer.Domain.Commands.Notifications.CreateNotification;
@@ -139,6 +140,9 @@ namespace BlossomServer.Domain.Extensions
 
             // ConversationParticipants
             services.AddScoped<IRequestHandler<CreateConversationParticipantCommand>, CreateConversationParticipantCommandHandler>();
+
+            // Email
+            services.AddScoped<IRequestHandler<SendMailCommand>, SendMailCommandHandler>();
 
             return services;
         }

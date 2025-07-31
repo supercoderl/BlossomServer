@@ -65,6 +65,7 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<ISignalRService, SignalRService>();
             services.AddScoped<IMessageService, MessageService>();
+            services.AddScoped<IMailService, MailService>();    
 
             return services;
         }
