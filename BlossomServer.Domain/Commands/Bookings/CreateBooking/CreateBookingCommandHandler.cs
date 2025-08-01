@@ -7,11 +7,6 @@ using BlossomServer.Shared.Events.Admin;
 using BlossomServer.Shared.Events.Booking;
 using BlossomServer.SharedKernel.Utils;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
 {
@@ -58,9 +53,15 @@ namespace BlossomServer.Domain.Commands.Bookings.CreateBooking
 
             _bookingRepository.Add(booking);
 
-            if(await CommitAsync())
+            if (await CommitAsync())
             {
-                await Bus.RaiseEventAsync(new BookingCreatedEvent(booking.Id));
+                await Bus.RaiseEventAsync(new BookingCreatedEvent(
+                    booking.Id,
+                    booking.GuestEmail ?? "example@gmail.com",
+                    booking.GuestName ?? string.Empty,
+                    booking.GuestPhone ?? string.Empty,
+                    booking.ScheduleTime
+                ));
                 await Bus.RaiseEventAsync(new AdminNotificationRequiredEvent("You have a new booking!"));
                 await Bus.SendCommandAsync(new CreateBookingDetailCommand(
                     Guid.NewGuid(),

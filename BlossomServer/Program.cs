@@ -86,7 +86,8 @@ builder.Services.AddSettings<MailSettings>(builder.Configuration, "EmailConfigur
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<FanoutEventConsumer>();
-    /*    x.AddConsumer<TenantUpdatedEventConsumer>();*/
+    x.AddConsumer<BookingCreatedEventConsumer>();
+    x.AddConsumer<EmailConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
     {
@@ -111,18 +112,40 @@ builder.Services.AddMassTransit(x =>
         });
 
         // Every instance of the service will receive the message
-        cfg.ReceiveEndpoint("clean-architecture-fanout-event-" + Guid.NewGuid(), e =>
+        cfg.ReceiveEndpoint("blossom-server-fanout-event-" + Guid.NewGuid(), e =>
         {
             e.Durable = false;
             e.AutoDelete = true;
             e.ConfigureConsumer<FanoutEventConsumer>(context);
             e.DiscardSkippedMessages();
         });
-        /*        cfg.ReceiveEndpoint("clean-architecture-fanout-events", e =>
-                {
-                    e.ConfigureConsumer<TenantUpdatedEventConsumer>(context);
-                    e.DiscardSkippedMessages();
-                });*/
+        cfg.ReceiveEndpoint("blossom-server-fanout-events", e =>
+        {
+            e.ConfigureConsumer<BookingCreatedEventConsumer>(context);
+            e.DiscardSkippedMessages();
+        });
+        cfg.ReceiveEndpoint("blossom-server-emails", e =>
+        {
+            e.Durable = true; // Keep emails durable for reliability
+            e.ConfigureConsumer<EmailConsumer>(context);
+
+            // Configure retry policy for failed emails
+            e.UseMessageRetry(r => r.Intervals(
+                TimeSpan.FromSeconds(10),
+                TimeSpan.FromSeconds(30),
+                TimeSpan.FromMinutes(1),
+                TimeSpan.FromMinutes(5)
+            ));
+
+            // Optional: Configure circuit breaker
+            e.UseCircuitBreaker(cb =>
+            {
+                cb.TrackingPeriod = TimeSpan.FromMinutes(1);
+                cb.TripThreshold = 15;
+                cb.ActiveThreshold = 10;
+                cb.ResetInterval = TimeSpan.FromMinutes(5);
+            });
+        });
         cfg.ConfigureEndpoints(context);
     });
 });
