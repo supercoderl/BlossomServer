@@ -48,5 +48,7 @@ namespace BlossomServer.Domain.Entities
         public void SetServiceOptionId(Guid? serviceOptionId) {  ServiceOptionId = serviceOptionId; }
         public void SetQuantity( int quantity ) { Quantity = quantity; }
         public void SetUnitPrice( decimal unitPrice ) { UnitPrice = unitPrice; }
+        public void SetService(Service? service ) { Service = service; }
+        public void SetServiceOption(ServiceOption? serviceOption ) { ServiceOption = serviceOption; }
     }
 }

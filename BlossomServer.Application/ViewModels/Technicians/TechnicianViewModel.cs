@@ -15,6 +15,7 @@ namespace BlossomServer.Application.ViewModels.Technicians
         public double Rating { get; set; }
         public int YearsOfExperience { get; set; }
         public string FullName { get; set; } = string.Empty;
+        public string AvatarUrl { get; set; } = string.Empty;
 
         public static TechnicianViewModel FromTechnician(Technician technician)
         {
@@ -25,7 +26,8 @@ namespace BlossomServer.Application.ViewModels.Technicians
                 Bio = technician.Bio ?? string.Empty,
                 Rating = technician.Rating,
                 YearsOfExperience = technician.YearsOfExperience,
-                FullName = technician.User != null ? technician.User.FullName : string.Empty
+                FullName = technician.User != null ? technician.User.FullName : string.Empty,
+                AvatarUrl = technician.User != null ? technician.User.AvatarUrl : string.Empty
             };
         }
     }

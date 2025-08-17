@@ -1,6 +1,7 @@
 ﻿using BlossomServer.Domain.Interfaces;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Domain.Settings;
+using BlossomServer.Shared.Events.FileInfo;
 using BlossomServer.SharedKernel.Utils;
 using Imagekit.Sdk;
 using MediatR;
@@ -41,6 +42,14 @@ namespace BlossomServer.Domain.Commands.Files.UploadFile
             };
 
             Result resp = _imagekitClient.Upload(ob2);
+
+            await Bus.RaiseEventAsync(new FileUploadedEvent(
+                Guid.NewGuid(), 
+                resp.fileId, 
+                request.OldUrl,
+                resp.url, 
+                ob2.fileName
+            ));
 
             return resp.url;
         }

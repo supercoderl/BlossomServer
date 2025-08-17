@@ -7,9 +7,12 @@ using BlossomServer.Application.ViewModels.Users;
 using BlossomServer.Domain.Commands.Users.ChangePassword;
 using BlossomServer.Domain.Commands.Users.CreateUser;
 using BlossomServer.Domain.Commands.Users.DeleteUser;
+using BlossomServer.Domain.Commands.Users.ForgotPassword;
 using BlossomServer.Domain.Commands.Users.Login;
 using BlossomServer.Domain.Commands.Users.RefreshToken;
+using BlossomServer.Domain.Commands.Users.ResetPassword;
 using BlossomServer.Domain.Commands.Users.UpdateUser;
+using BlossomServer.Domain.Enums;
 using BlossomServer.Domain.Interfaces;
 
 namespace BlossomServer.Application.Services
@@ -37,11 +40,13 @@ namespace BlossomServer.Application.Services
 
         public async Task<PagedResult<UserViewModel>> GetAllUsersAsync(
             PageQuery query,
+            UserRole? role,
             bool includeDeleted,
             string searchTerm = "",
+            bool excludeBot = true,
             SortQuery? sortQuery = null)
         {
-            return await _bus.QueryAsync(new GetAllUsersQuery(query, includeDeleted, searchTerm, sortQuery));
+            return await _bus.QueryAsync(new GetAllUsersQuery(query, role, includeDeleted, searchTerm, excludeBot, sortQuery));
         }
 
         public async Task<Guid> CreateUserAsync(CreateUserViewModel user)
@@ -101,6 +106,20 @@ namespace BlossomServer.Application.Services
         public async Task<object> RefreshTokenAsync(RefreshTokenViewModel viewModel)
         {
             return await _bus.QueryAsync(new RefreshTokenCommand(viewModel.RefreshToken));
+        }
+
+        public async Task<Guid> ForgotPasswordAsync(ForgotPasswordViewModel viewModel)
+        {
+            var id = Guid.NewGuid();
+
+            await _bus.SendCommandAsync(new ForgotPasswordCommand(id, viewModel.Identifier));
+
+            return id;
+        }
+
+        public async Task ResetPasswordAsync(ResetPasswordViewModel viewModel)
+        {
+            await _bus.SendCommandAsync(new ResetPasswordCommand(viewModel.Code, viewModel.NewPassword));
         }
     }
 }

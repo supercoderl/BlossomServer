@@ -8,6 +8,15 @@ using System.Threading.Tasks;
 namespace BlossomServer.Domain.Interfaces.Repositories
 {
     public interface IServiceImageRepository : IRepository<ServiceImage, Guid>
-    { 
+    {
+        Task<IEnumerable<ServiceImage>> GetAllServiceImagesBySQL(
+            string searchTerm,
+            bool includeDeleted,
+            int page,
+            int pageSize,
+            string sortColumn,
+            string sortDirection,
+            CancellationToken cancellationToken = default
+        );
     }
 }

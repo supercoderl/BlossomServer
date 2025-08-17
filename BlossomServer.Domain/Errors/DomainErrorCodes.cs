@@ -65,5 +65,32 @@ namespace BlossomServer.Domain.Errors
             // Booking Validation
             public const string EmptyId = "BOOKING_EMPTY_ID";
         }
+
+        public static class Subcriber
+        {
+            // Subcriber Validation
+            public const string EmptyEmail= "SUBCRIBER_EMPTY_EMAIL";
+            public const string InvalidEmail = "SUBCRIBER_INVALID_EMAIL";
+        }
+
+        public static class Contact
+        {
+            // Contact Validation
+            public const string EmptyName = "CONTACT_EMPTY_NAME";
+            public const string EmptyEmail = "CONTACT_EMPTY_EMAIL";
+            public const string EmptyMessage = "CONTACT_EMPTY_MESSAGE";
+        }
+
+        public static class ContactResponse
+        {
+            // Contact Response Validation
+            public const string EmptyResponseText = "CONTACT_RESPONSE_EMPTY_RESPONSE_TEXT";
+        }
+
+        public static class Blog
+        {
+            // Blog Validation
+            public const string EmptyId = "BLOG_EMPTY_ID";
+        }
     }
 }

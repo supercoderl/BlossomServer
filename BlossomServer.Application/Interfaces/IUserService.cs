@@ -1,6 +1,7 @@
 ﻿using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Application.ViewModels.Users;
+using BlossomServer.Domain.Enums;
 
 namespace BlossomServer.Application.Interfaces
 {
@@ -11,8 +12,10 @@ namespace BlossomServer.Application.Interfaces
 
         public Task<PagedResult<UserViewModel>> GetAllUsersAsync(
             PageQuery query,
+            UserRole? role,
             bool includeDeleted,
             string searchTerm = "",
+            bool excludeBot = true,
             SortQuery? sortQuery = null);
 
         public Task<Guid> CreateUserAsync(CreateUserViewModel user);
@@ -21,5 +24,7 @@ namespace BlossomServer.Application.Interfaces
         public Task ChangePasswordAsync(ChangePasswordViewModel viewModel);
         public Task<object> LoginUserAsync(LoginUserViewModel viewModel);
         public Task<object> RefreshTokenAsync(RefreshTokenViewModel viewModel);
+        public Task<Guid> ForgotPasswordAsync(ForgotPasswordViewModel viewModel);
+        public Task ResetPasswordAsync(ResetPasswordViewModel viewModel);
     }
 }

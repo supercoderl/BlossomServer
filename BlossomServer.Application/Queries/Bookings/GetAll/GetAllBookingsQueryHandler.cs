@@ -1,11 +1,9 @@
-﻿using BlossomServer.Application.Extensions;
-using BlossomServer.Application.ViewModels;
+﻿using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Bookings;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Interfaces.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlossomServer.Application.Queries.Bookings.GetAll
 {
@@ -27,31 +25,19 @@ namespace BlossomServer.Application.Queries.Bookings.GetAll
             GetAllBookingsQuery request,
             CancellationToken cancellationToken)
         {
-            var bookingsQuery = _bookingRepository
-                .GetAllAsNoTracking()
-                .IgnoreQueryFilters()
-                .Include(x => x.BookingDetails)
-                    .ThenInclude(x => x.ServiceOption)
-                    .ThenInclude(x => x.Service)
-                .Where(x => request.IncludeDeleted || x.DeletedAt == null);
+            var results = await _bookingRepository.GetAllBookingsBySQL(
+                request.SearchTerm,
+                request.IncludeDeleted,
+                request.Query.Page,
+                request.Query.PageSize,
+                request.SortQuery?.Query ?? "Id",
+                "ASC",
+                cancellationToken
+            );
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
+            var bookings = results.Select(b => BookingViewModel.FromBooking(b)).ToList();
 
-            }
-
-            var totalCount = await bookingsQuery.CountAsync(cancellationToken);
-
-            bookingsQuery = bookingsQuery.GetOrderedQueryable(request.SortQuery, _sortingExpressionProvider);
-
-            var bookings = await bookingsQuery
-                .Skip((request.Query.Page - 1) * request.Query.PageSize)
-                .Take(request.Query.PageSize)
-                .Select(booking => BookingViewModel.FromBooking(booking))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<BookingViewModel>(
-                totalCount, bookings, request.Query.Page, request.Query.PageSize);
+            return new PagedResult<BookingViewModel>(results.Count(), bookings, request.Query.Page, request.Query.PageSize);
         }
     }
 }

@@ -43,6 +43,7 @@ namespace BlossomServer.Domain.Entities
         public void SetIcon( string icon ) { Icon = icon; }
         public void SetUrl ( string url ) { Url = url; }
         public void SetPriority( int priority ) { Priority = priority; }
-        public void SetUpdatedAt() { UpdatedAt = TimeZoneHelper.GetLocalTimeNow(); }
+        public void SetCreatedAt(DateTime createdAt) { CreatedAt = createdAt; }
+        public void SetUpdatedAt(DateTime? updatedAt) { UpdatedAt = updatedAt.HasValue ? updatedAt.Value : TimeZoneHelper.GetLocalTimeNow(); }
     }
 }

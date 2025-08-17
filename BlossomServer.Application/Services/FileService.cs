@@ -1,5 +1,6 @@
 ﻿using BlossomServer.Application.Interfaces;
 using BlossomServer.Application.ViewModels.Files;
+using BlossomServer.Domain.Commands.Files.DeleteFile;
 using BlossomServer.Domain.Commands.Files.UploadFile;
 using BlossomServer.Domain.Interfaces;
 using System;
@@ -19,9 +20,14 @@ namespace BlossomServer.Application.Services
             _bus = bus;
         }
 
+        public async Task DeleteExampleFile(string id)
+        {
+            await _bus.SendCommandAsync(new DeleteFileCommand(id));
+        }
+
         public async Task<string> UploadExampleFile(UploadExampleFileViewModel file)
         {
-            return await _bus.QueryAsync(new UploadFileCommand(file.File, null, false));
+            return await _bus.QueryAsync(new UploadFileCommand(file.File, null, null, false));
         }
     }
 }

@@ -17,13 +17,143 @@ namespace BlossomServer.Infrastructure.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "8.0.16")
+                .HasAnnotation("ProductVersion", "8.0.15")
                 .HasAnnotation("Proxies:ChangeTracking", false)
                 .HasAnnotation("Proxies:CheckEquality", false)
                 .HasAnnotation("Proxies:LazyLoading", true)
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.AuditLog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ApplicationUser")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("ChangedBy")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<DateTime>("ChangedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ColumnName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("IpAddress")
+                        .HasMaxLength(45)
+                        .HasColumnType("nvarchar(45)");
+
+                    b.Property<string>("NewValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("OldValue")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Operation")
+                        .IsRequired()
+                        .HasMaxLength(10)
+                        .HasColumnType("nvarchar(10)");
+
+                    b.Property<string>("PrimaryKey")
+                        .IsRequired()
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("SessionId")
+                        .HasMaxLength(450)
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("TableName")
+                        .IsRequired()
+                        .HasMaxLength(128)
+                        .HasColumnType("nvarchar(128)");
+
+                    b.Property<string>("UserAgent")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ChangedBy");
+
+                    b.HasIndex("ChangedDate");
+
+                    b.HasIndex("PrimaryKey");
+
+                    b.HasIndex("TableName");
+
+                    b.ToTable("AuditLogs");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Blog", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AuthorId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<int>("CommentsCount")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasColumnType("ntext");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<bool>("IsPublished")
+                        .HasColumnType("bit");
+
+                    b.Property<DateTime>("PublishedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Slug")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Tags")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ThumbnailUrl")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("ViewsCount")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AuthorId");
+
+                    b.ToTable("Blogs");
+                });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Booking", b =>
                 {
@@ -155,6 +285,70 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.ToTable("Categories");
                 });
 
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Contact", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Contacts");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.ContactResponse", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("ContactId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("ResponderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("ResponseText")
+                        .IsRequired()
+                        .HasMaxLength(1000)
+                        .HasColumnType("nvarchar(1000)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ContactId")
+                        .IsUnique();
+
+                    b.HasIndex("ResponderId");
+
+                    b.ToTable("ContactResponses");
+                });
+
             modelBuilder.Entity("BlossomServer.Domain.Entities.Conversation", b =>
                 {
                     b.Property<Guid>("Id")
@@ -210,6 +404,98 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("ConversationParticipants");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.EmailReminder", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<Guid>("EntityId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("HangfireJobId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<bool>("IsScheduled")
+                        .HasColumnType("bit");
+
+                    b.Property<bool>("IsSent")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Message")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("RecipientEmail")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("RecipientName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("RecipientType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("ReminderDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("ReminderType")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TargetDate")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("EmailReminders");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.FileInfo", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("FileId")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FileName")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("Url")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("FileInfos");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Message", b =>
@@ -292,6 +578,39 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.HasIndex("UserId");
 
                     b.ToTable("Notifications");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.PasswordResetToken", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<DateTime>("ExpirationDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<bool>("IsUsed")
+                        .HasColumnType("bit");
+
+                    b.Property<string>("Token")
+                        .IsRequired()
+                        .HasMaxLength(64)
+                        .HasColumnType("nvarchar(64)");
+
+                    b.Property<Guid>("UserId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("UserId");
+
+                    b.ToTable("PasswordResetTokens");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Payment", b =>
@@ -473,7 +792,8 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.Property<decimal?>("Price")
@@ -552,7 +872,8 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.Property<string>("VariantName")
                         .IsRequired()
-                        .HasColumnType("nvarchar(max)")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)")
                         .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
                     b.HasKey("Id");
@@ -560,6 +881,31 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.HasIndex("ServiceId");
 
                     b.ToTable("ServiceOptions");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Subscriber", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<DateTimeOffset?>("DeletedAt")
+                        .HasColumnType("datetimeoffset");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("nvarchar(256)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.ToTable("Subscribers");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Technician", b =>
@@ -655,19 +1001,24 @@ namespace BlossomServer.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Users");
+                    b.ToTable("Users", null, t =>
+                        {
+                            t.HasTrigger("TR_Users_Audit");
+                        });
+
+                    b.HasAnnotation("SqlServer:UseSqlOutputClause", false);
 
                     b.HasData(
                         new
                         {
                             Id = new Guid("7e3892c0-9374-49fa-a3fd-53db637a40ae"),
                             AvatarUrl = "https://haamc.offerslokam.com/wp-content/uploads/2023/09/client-dummy-Google-Search-1.png",
-                            DateOfBirth = new DateOnly(2025, 7, 15),
+                            DateOfBirth = new DateOnly(2025, 8, 14),
                             Email = "admin@gmail.com",
                             FirstName = "Admin",
                             Gender = 0,
                             LastName = "Super",
-                            Password = "$2a$11$.scxhThOWo1kAF2wsIhWMucApPSHM7cOm..a4RGuixYiFEb2yvWGG",
+                            Password = "$2a$11$xy82k7kyWVcJ3t.jd6JKoeUhNzwkL89VTxZyJwvze2MxZqtQpktOy",
                             PhoneNumber = "+1586324954",
                             Role = 0,
                             Status = 0
@@ -676,12 +1027,12 @@ namespace BlossomServer.Infrastructure.Migrations
                         {
                             Id = new Guid("98f7750d-655a-4724-812f-50b4ab64012d"),
                             AvatarUrl = "https://avatars.githubusercontent.com/u/6422482?v=4",
-                            DateOfBirth = new DateOnly(2025, 7, 15),
+                            DateOfBirth = new DateOnly(2025, 8, 14),
                             Email = "bot@nblossom.com",
                             FirstName = "Bot",
                             Gender = 3,
                             LastName = "System",
-                            Password = "$2a$11$2ePtlaXHFzw3XTVwGzPbbOlEF9v2A1V8PfkhmlVWTvfKjgCHWBkcG",
+                            Password = "$2a$11$SED92X/4/7FM7jUbAZ2MseQh2kkj1SMxlLc/EtG5S7xnQJfbAKA0y",
                             PhoneNumber = "+1111111111",
                             Role = 4,
                             Status = 0
@@ -717,6 +1068,18 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.HasIndex("TechnicianId");
 
                     b.ToTable("WorkSchedules");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Blog", b =>
+                {
+                    b.HasOne("BlossomServer.Domain.Entities.User", "User")
+                        .WithMany("Blogs")
+                        .HasForeignKey("AuthorId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_Blogs_Users_AuthorId");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.Booking", b =>
@@ -763,6 +1126,27 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Navigation("Service");
 
                     b.Navigation("ServiceOption");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.ContactResponse", b =>
+                {
+                    b.HasOne("BlossomServer.Domain.Entities.Contact", "Contact")
+                        .WithOne("ContactResponse")
+                        .HasForeignKey("BlossomServer.Domain.Entities.ContactResponse", "ContactId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ContactResponse_Contact_ContactId");
+
+                    b.HasOne("BlossomServer.Domain.Entities.User", "User")
+                        .WithMany("ContactResponses")
+                        .HasForeignKey("ResponderId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_ContactResponse_User_ResponderId");
+
+                    b.Navigation("Contact");
+
+                    b.Navigation("User");
                 });
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.ConversationParticipant", b =>
@@ -823,6 +1207,18 @@ namespace BlossomServer.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired()
                         .HasConstraintName("FK_Notification_User_UserId");
+
+                    b.Navigation("User");
+                });
+
+            modelBuilder.Entity("BlossomServer.Domain.Entities.PasswordResetToken", b =>
+                {
+                    b.HasOne("BlossomServer.Domain.Entities.User", "User")
+                        .WithMany("PasswordResetTokens")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired()
+                        .HasConstraintName("FK_PasswordResetToken_User_UserId");
 
                     b.Navigation("User");
                 });
@@ -954,6 +1350,11 @@ namespace BlossomServer.Infrastructure.Migrations
                     b.Navigation("Services");
                 });
 
+            modelBuilder.Entity("BlossomServer.Domain.Entities.Contact", b =>
+                {
+                    b.Navigation("ContactResponse");
+                });
+
             modelBuilder.Entity("BlossomServer.Domain.Entities.Conversation", b =>
                 {
                     b.Navigation("ConversationParticipants");
@@ -986,11 +1387,17 @@ namespace BlossomServer.Infrastructure.Migrations
 
             modelBuilder.Entity("BlossomServer.Domain.Entities.User", b =>
                 {
+                    b.Navigation("Blogs");
+
                     b.Navigation("Bookings");
+
+                    b.Navigation("ContactResponses");
 
                     b.Navigation("ConversationParticipants");
 
                     b.Navigation("Notifications");
+
+                    b.Navigation("PasswordResetTokens");
 
                     b.Navigation("RecipientMessages");
 

@@ -6,6 +6,7 @@ using BlossomServer.Domain.Notifications;
 using MediatR;
 using BC = BCrypt.Net.BCrypt;
 using BlossomServer.Shared.Events.User;
+using BlossomServer.Domain.Commands.Technicians.CreateTechnician;
 
 namespace BlossomServer.Domain.Commands.Users.CreateUser
 {
@@ -77,6 +78,16 @@ namespace BlossomServer.Domain.Commands.Users.CreateUser
             if (await CommitAsync())
             {
                 await Bus.RaiseEventAsync(new UserCreatedEvent(user.Id));
+                if(user.Role == Enums.UserRole.Technician)
+                {
+                    await Bus.SendCommandAsync(new CreateTechnicianCommand(
+                        Guid.NewGuid(),
+                        user.Id,
+                        string.Empty,
+                        0,
+                        0
+                    ));
+                }
             }
         }
     }

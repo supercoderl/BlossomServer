@@ -4,6 +4,7 @@ using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Application.ViewModels.Users;
 using BlossomServer.Domain.Entities;
+using BlossomServer.Domain.Enums;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Models;
 using BlossomServer.Swagger;
@@ -34,15 +35,19 @@ namespace BlossomServer.Controllers
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<UserViewModel>>))]
         public async Task<IActionResult> GetAllUsersAsync(
             [FromQuery] PageQuery query,
+            [FromQuery] UserRole? role,
             [FromQuery] string searchTerm = "",
             [FromQuery] bool includeDeleted = false,
+            [FromQuery] bool excludeBot = true,
             [FromQuery] [SortableFieldsAttribute<UserViewModelSortProvider, UserViewModel, User>]
         SortQuery? sortQuery = null)
         {
             var users = await _userService.GetAllUsersAsync(
                 query,
+                role,
                 includeDeleted,
                 searchTerm,
+                excludeBot,
                 sortQuery);
             return Response(users);
         }
@@ -120,6 +125,26 @@ namespace BlossomServer.Controllers
         {
             var token = await _userService.RefreshTokenAsync(viewModel);
             return Response(token);
+        }
+
+        [HttpPost("forgot-password")]
+        [AllowAnonymous]
+        [SwaggerOperation("Send token for users to reset their password")]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<Guid>))]
+        public async Task<IActionResult> ForgotPasswordAsync([FromBody] ForgotPasswordViewModel viewModel)
+        {
+            var id = await _userService.ForgotPasswordAsync(viewModel);
+            return Response(id);
+        }
+
+        [HttpPost("reset-password")]
+        [AllowAnonymous]
+        [SwaggerOperation("Reset password's user")]
+        [SwaggerResponse(200, "Request successful")]
+        public async Task<IActionResult> ResetPasswordAsync([FromBody] ResetPasswordViewModel viewModel)
+        {
+            await _userService.ResetPasswordAsync(viewModel);
+            return Response();
         }
     }
 }

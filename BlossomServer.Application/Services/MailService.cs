@@ -21,7 +21,7 @@ namespace BlossomServer.Application.Services
 
         public async Task SendMailAsync(SendMailViewModel viewModel)
         {
-            await _bus.SendCommandAsync(new SendMailCommand(viewModel.To, viewModel.Subject, viewModel.Content));
+            await _bus.SendCommandAsync(new SendMailCommand(viewModel.To, viewModel.Subject, viewModel.Content, viewModel.IsHtml));
         }
     }
 }

@@ -1,22 +1,27 @@
 using Aikido.Zen.DotNetCore;
+using BlossomServer;
 using BlossomServer.Application.Extensions;
 using BlossomServer.Application.gRPC;
 using BlossomServer.Application.Hubs;
 using BlossomServer.Domain.Consumers;
 using BlossomServer.Domain.Extensions;
+using BlossomServer.Domain.Interfaces.BackgroundServices;
 using BlossomServer.Domain.Settings;
-
-/*using BlossomServer.BackgroundServices;*/
 using BlossomServer.Extensions;
+using BlossomServer.HealthChecks;
 using BlossomServer.Infrastructure.Database;
 using BlossomServer.Infrastructure.Extensions;
+using BlossomServer.Middlewares;
 using BlossomServer.ServiceDefaults;
+using Hangfire;
 using HealthChecks.ApplicationStatus.DependencyInjection;
 using HealthChecks.UI.Client;
 using MassTransit;
+using MediatR;
 using Microsoft.AspNetCore.Diagnostics.HealthChecks;
 using Microsoft.EntityFrameworkCore;
 using Newtonsoft.Json;
+using static BlossomServer.Middlewares.PerformanceMonitoringMiddleware;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -43,6 +48,9 @@ var dbConnectionString = isAspire
 
 builder.Services
     .AddHealthChecks()
+    .AddCheck<DatabaseWarmupHealthCheck>("database-warmup",
+        failureStatus: Microsoft.Extensions.Diagnostics.HealthChecks.HealthStatus.Degraded,
+        tags: new[] { "database", "warmup" })
     .AddDbContextCheck<ApplicationDbContext>()
     .AddApplicationStatus()
     .AddSqlServer(dbConnectionString!)
@@ -54,7 +62,15 @@ builder.Services
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
 {
     options.UseLazyLoadingProxies();
-    options.UseSqlServer(dbConnectionString, b => b.MigrationsAssembly("BlossomServer.Infrastructure"));
+    options.UseSqlServer(dbConnectionString, b =>
+    {
+        b.MigrationsAssembly("BlossomServer.Infrastructure");
+        b.EnableRetryOnFailure(
+            maxRetryCount: 3,
+            maxRetryDelay: TimeSpan.FromSeconds(5),
+            errorNumbersToAdd: null
+        );
+    });
 });
 
 builder.Services.AddCors(options =>
@@ -82,11 +98,20 @@ builder.Services.AddSettings<ImageKitSettings>(builder.Configuration, "ImageKit"
 builder.Services.AddSettings<GroqSettings>(builder.Configuration, "Groq");
 builder.Services.AddSettings<TwillioSettings>(builder.Configuration, "Twillio");
 builder.Services.AddSettings<MailSettings>(builder.Configuration, "EmailConfiguration");
+builder.Services.AddSettings<ClientSettings>(builder.Configuration, "Client");
+builder.Services.AddBackground();
+builder.Services.AddTriggerBasedAuditing();
+builder.Services.AddHangfire(builder.Configuration);
 
 builder.Services.AddMassTransit(x =>
 {
     x.AddConsumer<FanoutEventConsumer>();
     x.AddConsumer<BookingCreatedEventConsumer>();
+    x.AddConsumer<UserSubscribedEventConsumer>();
+    x.AddConsumer<ResponseContactEventConsumer>();
+    x.AddConsumer<CreateFileUploadedEventConsumer>();
+    x.AddConsumer<DeleteOldFileUploadedEventConsumer>();
+    x.AddConsumer<SendEmailReminderConsumer>();
     x.AddConsumer<EmailConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
@@ -119,9 +144,34 @@ builder.Services.AddMassTransit(x =>
             e.ConfigureConsumer<FanoutEventConsumer>(context);
             e.DiscardSkippedMessages();
         });
-        cfg.ReceiveEndpoint("blossom-server-fanout-events", e =>
+        cfg.ReceiveEndpoint("blossom-server-bookings", e =>
         {
             e.ConfigureConsumer<BookingCreatedEventConsumer>(context);
+            e.DiscardSkippedMessages();
+        });
+        cfg.ReceiveEndpoint("blossom-server-subscribers", e =>
+        {
+            e.ConfigureConsumer<UserSubscribedEventConsumer>(context);
+            e.DiscardSkippedMessages();
+        });
+        cfg.ReceiveEndpoint("blossom-server-response", e =>
+        {
+            e.ConfigureConsumer<ResponseContactEventConsumer>(context);
+            e.DiscardSkippedMessages();
+        });
+        cfg.ReceiveEndpoint("blossom-server-create-file", e =>
+        {
+            e.ConfigureConsumer<CreateFileUploadedEventConsumer>(context);
+            e.DiscardSkippedMessages();
+        });
+        cfg.ReceiveEndpoint("blossom-server-delete-file", e =>
+        {
+            e.ConfigureConsumer<DeleteOldFileUploadedEventConsumer>(context);
+            e.DiscardSkippedMessages();
+        });
+        cfg.ReceiveEndpoint("blossom-server-email-reminder", e =>
+        {
+            e.ConfigureConsumer<SendEmailReminderConsumer>(context);
             e.DiscardSkippedMessages();
         });
         cfg.ReceiveEndpoint("blossom-server-emails", e =>
@@ -150,7 +200,11 @@ builder.Services.AddMassTransit(x =>
     });
 });
 
-builder.Services.AddMediatR(cfg => { cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly); });
+builder.Services.AddMediatR(cfg =>
+{
+    cfg.RegisterServicesFromAssemblies(typeof(Program).Assembly);
+    cfg.AddBehavior(typeof(IPipelineBehavior<,>), typeof(PerformanceBehavior<,>));
+});
 
 builder.Services.AddLogging(x => x.AddSimpleConsole(console =>
 {
@@ -173,6 +227,14 @@ else
     builder.Services.AddDistributedMemoryCache();
 }
 
+builder.Services.AddMiniProfiler(options =>
+{
+    options.RouteBasePath = "/profiler";
+    options.SqlFormatter = new StackExchange.Profiling.SqlFormatters.InlineFormatter();
+    options.PopupRenderPosition = StackExchange.Profiling.RenderPosition.BottomLeft;
+    options.PopupShowTimeWithChildren = true;
+}).AddEntityFramework();
+
 var app = builder.Build();
 
 app.MapDefaultEndpoints();
@@ -192,13 +254,18 @@ using (var scope = app.Services.CreateScope())
 app.UseSwagger();
 app.UseSwaggerUI();
 app.MapGrpcReflectionService();
+app.UseMiddleware<PerformanceMonitoringMiddleware>();
 
 app.UseHttpsRedirection();
 
 app.UseCors("policy");
 
+app.UseRouting();
+app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseMiniProfiler();
 
 if (builder.Environment.IsProduction())
 {
@@ -209,6 +276,17 @@ app.MapHealthChecks("/healthz", new HealthCheckOptions
 {
     ResponseWriter = UIResponseWriter.WriteHealthCheckUIResponse
 });
+
+app.UseHangfireDashboard("/hangfire", new DashboardOptions
+{
+    Authorization = new[] { new HangfireAuthorizationFilter() }
+});
+
+// Schedule recurring job to process email reminders
+RecurringJob.AddOrUpdate<IEmailReminderBackgroundService>(
+    "process-email-reminders",
+    service => service.ProcessEmailRemindersAsync(),
+    Cron.Daily(9)); // Run daily at 9 AM - adjust as needed
 
 app.MapControllers();
 app.MapGrpcService<UsersApiImplementation>();

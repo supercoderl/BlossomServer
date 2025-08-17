@@ -50,7 +50,8 @@ namespace BlossomServer.Domain.Consumers
                     Best regards,  
                     Blossom Nails 
                     https://blossom-pi.vercel.app
-                "
+                ",
+                false
             );
 
             await _publishEndpoint.Publish(emailCommand);

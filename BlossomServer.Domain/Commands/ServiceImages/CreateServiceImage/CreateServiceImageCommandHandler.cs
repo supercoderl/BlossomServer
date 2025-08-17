@@ -33,7 +33,7 @@ namespace BlossomServer.Domain.Commands.ServiceImages.CreateServiceImage
             {
                 var file = request.ImageFile[i];
 
-                var url = await Bus.QueryAsync(new UploadFileCommand(file, null, false));
+                var url = await Bus.QueryAsync(new UploadFileCommand(file, null, null, false));
                 var serviceImage = new Entities.ServiceImage(
                     request.ServiceImageId,
                     file.FileName,

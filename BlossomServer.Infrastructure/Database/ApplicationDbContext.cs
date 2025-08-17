@@ -22,6 +22,14 @@ namespace BlossomServer.Infrastructure.Database
         public DbSet<Message> Messages { get; set; } = null!;
         public DbSet<Conversation> Conversations { get; set; } = null!;
         public DbSet<ConversationParticipant> ConversationParticipants { get; set; } = null!;
+        public DbSet<PasswordResetToken> PasswordResetTokens { get; set; } = null!;
+        public DbSet<Subscriber> Subscribers { get; set; } = null!;
+        public DbSet<Contact> Contacts { get; set; } = null!;   
+        public DbSet<ContactResponse> ContactResponses { get; set; } = null!;
+        public DbSet<AuditLog> AuditLogs { get; set; } = null!;
+        public DbSet<Blog> Blogs { get; set; } = null!;
+        public DbSet<Domain.Entities.FileInfo> FileInfos { get; set; } = null!;
+        public DbSet<EmailReminder> EmailReminders { get; set; } = null!;
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options) { }
 
@@ -45,6 +53,13 @@ namespace BlossomServer.Infrastructure.Database
 
         }
 
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        {
+            // Enable triggers
+            optionsBuilder.EnableServiceProviderCaching(false);
+            optionsBuilder.EnableSensitiveDataLogging(false);
+        }
+
         private static void ApplyConfigurations(ModelBuilder builder)
         {
             // Apply configurations for each entity type
@@ -65,6 +80,14 @@ namespace BlossomServer.Infrastructure.Database
             builder.ApplyConfiguration(new MessageConfiguration());
             builder.ApplyConfiguration(new ConversationConfiguration());
             builder.ApplyConfiguration(new ConversationParticipantConfiguration());
+            builder.ApplyConfiguration(new PasswordResetTokenConfiguration());
+            builder.ApplyConfiguration(new SubscriberConfiguration());
+            builder.ApplyConfiguration(new ContactConfiguration());
+            builder.ApplyConfiguration(new ContactResponseConfiguration());
+            builder.ApplyConfiguration(new AuditLogConfiguration());
+            builder.ApplyConfiguration(new BlogConfiguration());
+            builder.ApplyConfiguration(new FileInfoConfiguration());
+            builder.ApplyConfiguration(new EmailReminderConfiguration());
         }
     }
 }

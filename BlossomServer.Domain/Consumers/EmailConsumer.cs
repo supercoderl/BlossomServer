@@ -31,7 +31,8 @@ namespace BlossomServer.Domain.Consumers
                 await _bus.SendCommandAsync(new SendMailCommand(
                     context.Message.To,
                     context.Message.Subject,
-                    context.Message.Content
+                    context.Message.Content,
+                    false
                 ));
 
                 _logger.LogInformation("Email sent successfully to {To}", context.Message.To);

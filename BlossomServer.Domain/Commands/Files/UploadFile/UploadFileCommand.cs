@@ -13,16 +13,19 @@ namespace BlossomServer.Domain.Commands.Files.UploadFile
         private static readonly UploadFileCommandValidation s_validation = new();
 
         public IFormFile File { get; }
+        public string? OldUrl { get; }
         public string? ContentTypeOverride { get; }
         public bool ValidateChecksum { get; }
 
         public UploadFileCommand(
             IFormFile file,
+            string? oldUrl,
             string? contentTypeOverride,
             bool validateChecksum
         ) : base(Guid.NewGuid())
         {
             File = file;
+            OldUrl = oldUrl;
             ContentTypeOverride = contentTypeOverride;
             ValidateChecksum = validateChecksum;
         }

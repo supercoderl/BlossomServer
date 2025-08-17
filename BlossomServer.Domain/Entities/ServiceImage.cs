@@ -39,5 +39,7 @@ namespace BlossomServer.Domain.Entities
         public void SetImageUrl( string imageUrl ) { ImageUrl = imageUrl; }
         public void SetServiceId( Guid serviceId ) { ServiceId = serviceId; }
         public void SetDescription( string? description ) { Description = description; }
+        public void SetCreatedAt(DateTime createdAt) { CreatedAt = createdAt; }
+        public void SetService(Service? service) { Service = service; }
     }
 }

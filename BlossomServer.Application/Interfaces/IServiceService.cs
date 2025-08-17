@@ -14,6 +14,12 @@ namespace BlossomServer.Application.Interfaces
             string searchTerm = "",
             SortQuery? sortQuery = null);
 
+        public Task<PagedResult<ServiceViewModel>> GetAllServicesBySQLAsync(
+            PageQuery query,
+            bool includeDeleted,
+            string searchTerm = "",
+            SortQuery? sortQuery = null);
+
         public Task<Guid> CreateServiceAsync(CreateServiceViewModel service);
         public Task UpdateServiceAsync(UpdateServiceViewModel service);
         public Task DeleteServiceAsync(Guid serviceId);

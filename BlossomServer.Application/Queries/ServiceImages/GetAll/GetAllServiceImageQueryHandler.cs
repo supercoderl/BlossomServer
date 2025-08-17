@@ -1,11 +1,9 @@
-﻿using BlossomServer.Application.Extensions;
-using BlossomServer.Application.ViewModels;
+﻿using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.ServiceImages;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Interfaces.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlossomServer.Application.Queries.ServiceImages.GetAll
 {
@@ -27,29 +25,19 @@ namespace BlossomServer.Application.Queries.ServiceImages.GetAll
             GetAllServiceImagesQuery request,
             CancellationToken cancellationToken)
         {
-            var serviceImagesQuery = _serviceImageRepository
-                .GetAllAsNoTracking()
-                .IgnoreQueryFilters()
-                .Include(x => x.Service)
-                .Where(x => request.IncludeDeleted || x.DeletedAt == null);
+            var results = await _serviceImageRepository.GetAllServiceImagesBySQL(
+                request.SearchTerm,
+                request.IncludeDeleted,
+                request.Query.Page,
+                request.Query.PageSize,
+                request.SortQuery?.Query ?? "Id",
+                "ASC",
+                cancellationToken
+            );
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
+            var serviceImages = results.Select(si => ServiceImageViewModel.FromServiceImage(si)).ToList();
 
-            }
-
-            var totalCount = await serviceImagesQuery.CountAsync(cancellationToken);
-
-            serviceImagesQuery = serviceImagesQuery.GetOrderedQueryable(request.SortQuery, _sortingExpressionProvider);
-
-            var serviceImages = await serviceImagesQuery
-                .Skip((request.Query.Page - 1) * request.Query.PageSize)
-                .Take(request.Query.PageSize)
-                .Select(serviceImage => ServiceImageViewModel.FromServiceImage(serviceImage))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<ServiceImageViewModel>(
-                totalCount, serviceImages, request.Query.Page, request.Query.PageSize);
+            return new PagedResult<ServiceImageViewModel>(results.Count(), serviceImages, request.Query.Page, request.Query.PageSize);
         }
     }
 }

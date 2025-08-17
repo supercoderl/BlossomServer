@@ -54,6 +54,7 @@ namespace BlossomServer.Domain.Entities
         public void SetMessageText(string messageText) { MessageText = messageText; }
         public void SetIsRead(bool isRead) { IsRead = isRead; }
         public void SetUnreadCount(int unreadCount) { UnreadCount = unreadCount; }
-        public void SetLastUpdatedAt() { LastUpdatedAt = TimeZoneHelper.GetLocalTimeNow(); }
+        public void SetCreatedAt(DateTime createdAt) { CreatedAt = createdAt; }
+        public void SetLastUpdatedAt(DateTime? lastUpdatedAt) { LastUpdatedAt = lastUpdatedAt.HasValue ? lastUpdatedAt.Value : TimeZoneHelper.GetLocalTimeNow(); }
     }
 }

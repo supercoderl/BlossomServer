@@ -37,6 +37,7 @@ namespace BlossomServer.Domain.Commands.Services.CreateService
                 url = await Bus.QueryAsync(new UploadFileCommand(
                     request.RepresentativeImage,
                     null,
+                    null,
                     false
                 ));
             }

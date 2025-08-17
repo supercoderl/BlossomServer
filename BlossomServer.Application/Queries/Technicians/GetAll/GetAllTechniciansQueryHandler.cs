@@ -1,11 +1,9 @@
-﻿using BlossomServer.Application.Extensions;
-using BlossomServer.Application.ViewModels;
+﻿using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Application.ViewModels.Technicians;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Interfaces.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlossomServer.Application.Queries.Technicians.GetAll
 {
@@ -27,29 +25,19 @@ namespace BlossomServer.Application.Queries.Technicians.GetAll
             GetAllTechniciansQuery request,
             CancellationToken cancellationToken)
         {
-            var techniciansQuery = _technicianRepository
-                .GetAllAsNoTracking()
-                .IgnoreQueryFilters()
-                .Include(x => x.User)
-                .Where(x => request.IncludeDeleted || x.DeletedAt == null);
+            var results = await _technicianRepository.GetAllTechniciansBySQL(
+                request.SearchTerm,
+                request.IncludeDeleted,
+                request.Query.Page,
+                request.Query.PageSize,
+                request.SortQuery?.Query ?? "Id",
+                "ASC",
+                cancellationToken
+            );
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
+            var technicians = results.Select(t => TechnicianViewModel.FromTechnician(t)).ToList();
 
-            }
-
-            var totalCount = await techniciansQuery.CountAsync(cancellationToken);
-
-            techniciansQuery = techniciansQuery.GetOrderedQueryable(request.SortQuery, _sortingExpressionProvider);
-
-            var technicians = await techniciansQuery
-                .Skip((request.Query.Page - 1) * request.Query.PageSize)
-                .Take(request.Query.PageSize)
-                .Select(technician => TechnicianViewModel.FromTechnician(technician))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<TechnicianViewModel>(
-                totalCount, technicians, request.Query.Page, request.Query.PageSize);
+            return new PagedResult<TechnicianViewModel>(results.Count(), technicians, request.Query.Page, request.Query.PageSize);
         }
     }
 }

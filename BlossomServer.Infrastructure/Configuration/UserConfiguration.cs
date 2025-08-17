@@ -33,9 +33,11 @@ namespace BlossomServer.Infrastructure.Configuration
                 .IsRequired()
                 .HasMaxLength(15);
 
+            builder.ToTable("Users", tb => tb.HasTrigger("TR_Users_Audit"));
+
             builder.HasData(new User(
                 Ids.Seed.UserId,
-                BCrypt.Net.BCrypt.HashPassword("123456"),
+                BCrypt.Net.BCrypt.HashPassword("123456789aA@"),
                 "Admin",
                 "Super",
                 "admin@gmail.com",
@@ -51,7 +53,7 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.HasData(new User(
                 Ids.Seed.BotId,
-                BCrypt.Net.BCrypt.HashPassword("123456"),
+                BCrypt.Net.BCrypt.HashPassword("123456789aA@"),
                 "Bot",
                 "System",
                 "bot@nblossom.com",

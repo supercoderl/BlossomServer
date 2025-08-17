@@ -10,6 +10,7 @@ namespace BlossomServer.Application.ViewModels.Mails
     (
         string To,
         string Subject,
-        string Content
+        string Content,
+        bool IsHtml
     );
 }   

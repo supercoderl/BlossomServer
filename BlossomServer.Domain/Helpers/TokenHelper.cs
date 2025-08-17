@@ -67,5 +67,16 @@ namespace BlossomServer.Domain.Helpers
             int token = rng.Next(100000, 999999);
             return token.ToString();
         }
+
+        public static string GenerateResetPasswordToken(int byteLength = 32)
+        {
+            byte[] randomBytes = new byte[byteLength];
+            using (var rng = RandomNumberGenerator.Create())
+            {
+                rng.GetBytes(randomBytes);
+            }
+
+            return BitConverter.ToString(randomBytes).Replace("-", "").ToLower();
+        }
     }
 }

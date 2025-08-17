@@ -31,5 +31,16 @@ namespace BlossomServer.Controllers
             var url = await _fileService.UploadExampleFile(viewModel);
             return Response(url);
         }
+
+        [HttpDelete("{id}")]
+        [SwaggerOperation("Delete example")]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<string>))]
+        public async Task<IActionResult> DeleteExampleFileAsync(
+            [FromRoute] string id
+        )
+        {
+            await _fileService.DeleteExampleFile(id);
+            return Response();
+        }
     }
 }

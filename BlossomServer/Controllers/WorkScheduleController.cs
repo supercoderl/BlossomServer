@@ -29,6 +29,7 @@ namespace BlossomServer.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [SwaggerOperation("Get a list of all workSchedules")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<WorkScheduleViewModel>>))]
         public async Task<IActionResult> GetAllWorkSchedulesAsync(

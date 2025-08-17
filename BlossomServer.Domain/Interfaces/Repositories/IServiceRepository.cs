@@ -9,5 +9,16 @@ namespace BlossomServer.Domain.Interfaces.Repositories
 {
     public interface IServiceRepository : IRepository<Service, Guid>
     {
+        Task<IEnumerable<Service>> GetAllServicesBySQL(
+            string searchTerm,
+            bool includeDeleted,
+            int page,
+            int pageSize,
+            string sortColumn,
+            string sortDirection,
+            CancellationToken cancellationToken = default
+        );
+        Task<IEnumerable<object>> GetServicesPopularityRanking(CancellationToken cancellationToken);
+        Task<decimal> GetAverageServiceValue(string dateStart, string dateEnd, CancellationToken cancellationToken = default);
     }
 }

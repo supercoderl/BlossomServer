@@ -1,10 +1,16 @@
-﻿using BlossomServer.Application.EventHandler;
+﻿using BlossomServer.Application.Behaviors;
+using BlossomServer.Application.EventHandler;
 using BlossomServer.Application.Interfaces;
+using BlossomServer.Application.Queries.Blogs.GetAll;
+using BlossomServer.Application.Queries.Blogs.GetById;
 using BlossomServer.Application.Queries.Bookings.GetAll;
 using BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician;
 using BlossomServer.Application.Queries.Bookings.GetById;
 using BlossomServer.Application.Queries.Categories.GetAll;
 using BlossomServer.Application.Queries.Categories.GetById;
+using BlossomServer.Application.Queries.Contacts.GetAll;
+using BlossomServer.Application.Queries.Contacts.GetAllByEmail;
+using BlossomServer.Application.Queries.Dashboards.Admin;
 using BlossomServer.Application.Queries.Messages.CheckBot;
 using BlossomServer.Application.Queries.Messages.FindConversation;
 using BlossomServer.Application.Queries.Messages.GetAll;
@@ -16,6 +22,7 @@ using BlossomServer.Application.Queries.Reviews.GetAll;
 using BlossomServer.Application.Queries.Reviews.GetById;
 using BlossomServer.Application.Queries.ServiceImages.GetAll;
 using BlossomServer.Application.Queries.Services.GetAll;
+using BlossomServer.Application.Queries.Services.GetAllBySQL;
 using BlossomServer.Application.Queries.Services.GetById;
 using BlossomServer.Application.Queries.Technicians.GetAll;
 using BlossomServer.Application.Queries.Technicians.GetById;
@@ -26,8 +33,10 @@ using BlossomServer.Application.Queries.WorkSchedules.GetById;
 using BlossomServer.Application.Services;
 using BlossomServer.Application.SortProviders;
 using BlossomServer.Application.ViewModels;
+using BlossomServer.Application.ViewModels.Blogs;
 using BlossomServer.Application.ViewModels.Bookings;
 using BlossomServer.Application.ViewModels.Categories;
+using BlossomServer.Application.ViewModels.Contacts;
 using BlossomServer.Application.ViewModels.Messages;
 using BlossomServer.Application.ViewModels.Payments;
 using BlossomServer.Application.ViewModels.Promotions;
@@ -65,7 +74,12 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<IFileService, FileService>();
             services.AddScoped<ISignalRService, SignalRService>();
             services.AddScoped<IMessageService, MessageService>();
-            services.AddScoped<IMailService, MailService>();    
+            services.AddScoped<IMailService, MailService>();
+            services.AddScoped<ISubscriberService, SubscriberService>();
+            services.AddScoped<IContactService, ContactService>();
+            services.AddScoped<IContactResponseService, ContactResponseService>();
+            services.AddScoped<IBlogService, BlogService>();
+            services.AddScoped<IDashboardService, DashboardService>();
 
             return services;
         }
@@ -97,6 +111,7 @@ namespace BlossomServer.Application.Extensions
             // Service
             services.AddScoped<IRequestHandler<GetServiceByIdQuery, ServiceViewModel?>, GetServiceByIdQueryHandler>();
             services.AddScoped<IRequestHandler<GetAllServicesQuery, PagedResult<ServiceViewModel>>, GetAllServicesQueryHandler>();
+            services.AddScoped<IRequestHandler<GetAllServicesBySQLQuery, PagedResult<ServiceViewModel>>, GetAllServicesBySQLQueryHandler>();
 
             // Technician
             services.AddScoped<IRequestHandler<GetTechnicianByIdQuery, TechnicianViewModel?>, GetTechnicianByIdQueryHandler>();
@@ -117,6 +132,17 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<IRequestHandler<FindConversationIdQuery, Guid>, FindConversationIdQueryHandler>();
             services.AddScoped<IRequestHandler<GetAllMessagesQuery, PagedResult<MessageViewModel>>, GetAllMessagesQueryHandler>();
 
+            // Contact
+            services.AddScoped<IRequestHandler<GetAllContactsQuery, PagedResult<ContactViewModel>>, GetAllContactsQueryHandler>();
+            services.AddScoped<IRequestHandler<GetAllContactsByEmailQuery, PagedResult<ContactViewModel>>, GetAllContactsByEmailQueryHandler>();
+
+            // Blog
+            services.AddScoped<IRequestHandler<GetAllBlogsQuery, PagedResult<BlogViewModel>>, GetAllBlogsQueryHandler>();
+            services.AddScoped<IRequestHandler<GetBlogByIdQuery, BlogViewModel?>, GetBlogByIdQueryHandler>();
+
+            // Admin
+            services.AddScoped<IRequestHandler<GetBusinessAnalyticsQuery, object>, GetBusinessAnalyticsQueryHandler>();
+
             return services;
         }
 
@@ -133,6 +159,8 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<ISortingExpressionProvider<ServiceImageViewModel, ServiceImage>, ServiceImageViewModelSortProvider>();
             services.AddScoped<ISortingExpressionProvider<PaymentViewModel, Payment>, PaymentViewModelSortProvider>();
             services.AddScoped<ISortingExpressionProvider<MessageViewModel, Message>, MessageViewModelSortProvider>();
+            services.AddScoped<ISortingExpressionProvider<ContactViewModel, Contact>, ContactViewModelSortProvider>();
+            services.AddScoped<ISortingExpressionProvider<BlogViewModel, Blog>, BlogViewModelSortProvider>();
 
             return services;
         }
@@ -148,6 +176,13 @@ namespace BlossomServer.Application.Extensions
 
             // Message
             services.AddScoped<INotificationHandler<MessageAnswerEvent>, MessageAnswerEventHandler>();
+
+            return services;
+        }
+
+        public static IServiceCollection AddTriggerBasedAuditing(this IServiceCollection services)
+        {
+            services.AddScoped(typeof(IPipelineBehavior<,>), typeof(AuditContextPipelineBehavior<,>));
 
             return services;
         }

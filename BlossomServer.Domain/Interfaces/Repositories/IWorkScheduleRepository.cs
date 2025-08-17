@@ -9,5 +9,14 @@ namespace BlossomServer.Domain.Interfaces.Repositories
 {
     public interface IWorkScheduleRepository : IRepository<WorkSchedule, Guid>
     {
+        Task<IEnumerable<WorkSchedule>> GetAllWorkSchedulesBySQL(
+            string searchTerm,
+            bool includeDeleted,
+            int page,
+            int pageSize,
+            string sortColumn,
+            string sortDirection,
+            CancellationToken cancellationToken = default
+        );
     }
 }

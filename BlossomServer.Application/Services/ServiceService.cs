@@ -1,5 +1,6 @@
 ﻿using BlossomServer.Application.Interfaces;
 using BlossomServer.Application.Queries.Services.GetAll;
+using BlossomServer.Application.Queries.Services.GetAllBySQL;
 using BlossomServer.Application.Queries.Services.GetById;
 using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Services;
@@ -45,6 +46,11 @@ namespace BlossomServer.Application.Services
         public async Task<PagedResult<ServiceViewModel>> GetAllServicesAsync(PageQuery query, bool includeDeleted, string searchTerm = "", SortQuery? sortQuery = null)
         {
             return await _bus.QueryAsync(new GetAllServicesQuery(query, includeDeleted, searchTerm, sortQuery));
+        }
+
+        public async Task<PagedResult<ServiceViewModel>> GetAllServicesBySQLAsync(PageQuery query, bool includeDeleted, string searchTerm = "", SortQuery? sortQuery = null)
+        {
+            return await _bus.QueryAsync(new GetAllServicesBySQLQuery(query, includeDeleted, searchTerm, sortQuery));
         }
 
         public async Task<ServiceViewModel?> GetServiceByServiceIdAsync(Guid serviceId)

@@ -42,5 +42,6 @@ namespace BlossomServer.Domain.Entities
         public void SetMethod( PaymentMethod method ) { Method = method; }
         public void SetStatus( PaymentStatus status ) { Status = status; }
         public void SetTransactionCode( string transactionCode ) { TransactionCode = transactionCode; }
+        public void SetCreatedAt(DateTime createdAt) { CreatedAt = createdAt; }
     }
 }

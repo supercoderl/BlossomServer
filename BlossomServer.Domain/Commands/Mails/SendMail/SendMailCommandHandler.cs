@@ -40,7 +40,7 @@ namespace BlossomServer.Domain.Commands.Mails.SendMail
                 From = new MailAddress(_mail.Username, _mail.DisplayName),
                 Subject = request.Subject,
                 Body = request.Content,
-                IsBodyHtml = false
+                IsBodyHtml = request.IsHtml
             };
 
             mail.To.Add(request.To);

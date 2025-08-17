@@ -1,11 +1,9 @@
-﻿using BlossomServer.Application.Extensions;
-using BlossomServer.Application.ViewModels;
+﻿using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Categories;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Interfaces.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlossomServer.Application.Queries.Categories.GetAll
 {
@@ -27,29 +25,19 @@ namespace BlossomServer.Application.Queries.Categories.GetAll
             GetAllCategoriesQuery request,
             CancellationToken cancellationToken)
         {
-            var categoriesQuery = _categoryRepository
-                .GetAllAsNoTracking()
-                .IgnoreQueryFilters()
-                .Where(x => request.IncludeDeleted || x.DeletedAt == null);
+            var results = await _categoryRepository.GetAllCategoriesBySQL(
+                request.SearchTerm,
+                request.IncludeDeleted,
+                request.Query.Page,
+                request.Query.PageSize,
+                request.SortQuery?.Query ?? "Id",
+                "ASC",
+                cancellationToken
+            );
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                categoriesQuery = categoriesQuery.Where(s => EF.Functions.Like(s.Name, $"%{request.SearchTerm}%"));
-            }
+            var categories = results.Select(c => CategoryViewModel.FromCategory(c)).ToList();
 
-            var totalCount = await categoriesQuery.CountAsync(cancellationToken);
-
-            categoriesQuery = categoriesQuery.GetOrderedQueryable(request.SortQuery, _sortingExpressionProvider);
-
-            var categories = await categoriesQuery
-                .Skip((request.Query.Page - 1) * request.Query.PageSize)
-                .Take(request.Query.PageSize)
-                .OrderBy(s => s.Priority)
-                .Select(category => CategoryViewModel.FromCategory(category))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<CategoryViewModel>(
-                totalCount, categories, request.Query.Page, request.Query.PageSize);
+            return new PagedResult<CategoryViewModel>(results.Count(), categories, request.Query.Page, request.Query.PageSize);
         }
     }
 }

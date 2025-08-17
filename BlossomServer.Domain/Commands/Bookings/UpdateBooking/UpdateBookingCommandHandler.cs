@@ -52,7 +52,7 @@ namespace BlossomServer.Domain.Commands.Bookings.UpdateBooking
             booking.SetGuestName(request.GuestName);
             booking.SetGuestPhone(request.GuestPhone);
             booking.SetGuestEmail(request.GuestEmail);
-            booking.SetUpdatedAt();
+            booking.SetUpdatedAt(null);
 
             _bookingRepository.Update(booking);
 

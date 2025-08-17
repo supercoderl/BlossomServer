@@ -70,6 +70,7 @@ namespace BlossomServer.Domain.Commands.Users.UpdateUser
             {
                 string url = await Bus.QueryAsync(new UploadFileCommand(
                     request.AvatarFile,
+                    user.AvatarUrl,
                     null,
                     false
                 ));
@@ -80,6 +81,7 @@ namespace BlossomServer.Domain.Commands.Users.UpdateUser
             {
                 string url = await Bus.QueryAsync(new UploadFileCommand(
                     request.CoverPhoto,
+                    user.CoverPhotoUrl,
                     null,
                     false
                 ));

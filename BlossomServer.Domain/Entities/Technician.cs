@@ -44,5 +44,6 @@ namespace BlossomServer.Domain.Entities
         public void SetBio( string bio ) { Bio = bio; }
         public void SetRating( double rating ) { Rating = rating; }
         public void SetYearsOfExperience( int yearsOfExperience ) { YearsOfExperience = yearsOfExperience; }
+        public void SetUser(User? user) { User = user; }
     }
 }

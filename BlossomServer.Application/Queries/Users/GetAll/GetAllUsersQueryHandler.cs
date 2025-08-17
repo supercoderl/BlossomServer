@@ -1,11 +1,9 @@
-﻿using BlossomServer.Application.ViewModels.Sorting;
-using BlossomServer.Application.ViewModels;
-using BlossomServer.Domain.Interfaces.Repositories;
-using MediatR;
+﻿using BlossomServer.Application.ViewModels;
+using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Application.ViewModels.Users;
 using BlossomServer.Domain.Entities;
-using Microsoft.EntityFrameworkCore;
-using BlossomServer.Application.Extensions;
+using BlossomServer.Domain.Interfaces.Repositories;
+using MediatR;
 
 namespace BlossomServer.Application.Queries.Users.GetAll
 {
@@ -27,32 +25,21 @@ namespace BlossomServer.Application.Queries.Users.GetAll
             GetAllUsersQuery request,
             CancellationToken cancellationToken)
         {
-            var usersQuery = _userRepository
-                .GetAllAsNoTracking()
-                .IgnoreQueryFilters()
-                .Include(x => x.Technician)
-                .Where(x => request.IncludeDeleted || x.DeletedAt == null);
+            var results = await _userRepository.GetAllUsersBySQL(
+                request.SearchTerm,
+                request.Role,
+                request.IncludeDeleted,
+                request.Query.Page,
+                request.Query.PageSize,
+                request.ExcludeBot,
+                request.SortQuery?.Query ?? "Id",
+                "ASC",
+                cancellationToken
+            );
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                usersQuery = usersQuery.Where(user =>
-                    EF.Functions.Like(user.Email, $"%{request.SearchTerm}%") ||
-                    EF.Functions.Like(user.FirstName, $"%{request.SearchTerm}%") ||
-                    EF.Functions.Like(user.LastName, $"%{request.SearchTerm}%"));
-            }
+            var users = results.Select(u => UserViewModel.FromUser(u, null, null, null)).ToList();
 
-            var totalCount = await usersQuery.CountAsync(cancellationToken);
-
-            usersQuery = usersQuery.GetOrderedQueryable(request.SortQuery, _sortingExpressionProvider);
-
-            var users = await usersQuery
-                .Skip((request.Query.Page - 1) * request.Query.PageSize)
-                .Take(request.Query.PageSize)
-                .Select(user => UserViewModel.FromUser(user, "web", null, null))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<UserViewModel>(
-                totalCount, users, request.Query.Page, request.Query.PageSize);
+            return new PagedResult<UserViewModel>(results.Count(), users, request.Query.Page, request.Query.PageSize);
         }
     }
 }

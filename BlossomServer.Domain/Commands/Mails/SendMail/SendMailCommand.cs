@@ -14,16 +14,19 @@ namespace BlossomServer.Domain.Commands.Mails.SendMail
         public string To { get; }
         public string Subject { get; }
         public string Content { get; }
+        public bool IsHtml { get; }
 
         public SendMailCommand(
             string to,
             string subject,
-            string content
+            string content,
+            bool isHtml
         ) : base(Guid.NewGuid())
         {
             To = to;
             Subject = subject;
             Content = content;
+            IsHtml = isHtml;
         }
 
         public override bool IsValid()

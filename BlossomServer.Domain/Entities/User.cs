@@ -19,7 +19,7 @@ namespace BlossomServer.Domain.Entities
         public UserStatus Status { get; private set; }
         public DateTimeOffset? LastLoggedinDate { get; private set; }
 
-        public string FullName => $"{FirstName}, {LastName}";
+        public string FullName => $"{FirstName} {LastName}";
 
         public bool IsBot => Role == UserRole.Bot;
 
@@ -46,6 +46,15 @@ namespace BlossomServer.Domain.Entities
 
         [InverseProperty("User")]
         public virtual ICollection<ConversationParticipant> ConversationParticipants { get; set; } = new List<ConversationParticipant>();
+
+        [InverseProperty("User")]
+        public virtual ICollection<PasswordResetToken> PasswordResetTokens { get; set; } = new List<PasswordResetToken>();
+
+        [InverseProperty("User")]
+        public virtual ICollection<ContactResponse> ContactResponses { get; set; } = new List<ContactResponse>();
+
+        [InverseProperty("User")]
+        public virtual ICollection<Blog> Blogs { get; set; } = new List<Blog>();
 
         public User(
             Guid id,
@@ -128,5 +137,7 @@ namespace BlossomServer.Domain.Entities
         public void SetDateOfBirth(DateOnly dateOfBirth) { DateOfBirth = dateOfBirth; }
 
         public void SetRole(UserRole role) { Role = role; }
+
+        public void SetTechnician(Technician? technician) { Technician = technician; }
     }
 }

@@ -14,5 +14,6 @@ namespace BlossomServer.Domain.Errors
         public const string InvalidPassword = "INVALID_PASSWORD";
         public const string UploadFailed = "UPLOAD_FAILED";
         public const string ExpiredToken = "EXPIRED_TOKEN";
+        public const string ObjectAlreadyExists = "OBJECT_ALREADY_EXISTS";
     }
 }

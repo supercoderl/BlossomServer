@@ -17,6 +17,7 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(s => s.Name)
                 .IsRequired()
+                .HasMaxLength(255)
                 .UseCollation("SQL_Latin1_General_CP1_CI_AS");
 
             builder.Property(s => s.Description);

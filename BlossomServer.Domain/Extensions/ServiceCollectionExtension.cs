@@ -1,12 +1,22 @@
-﻿using BlossomServer.Domain.Commands.BookingDetails.CreateBookingDetail;
+﻿using BlossomServer.Domain.Commands.Blogs.CreateBlog;
+using BlossomServer.Domain.Commands.Blogs.DeleteBlog;
+using BlossomServer.Domain.Commands.Blogs.UpdateBlog;
+using BlossomServer.Domain.Commands.BookingDetails.CreateBookingDetail;
 using BlossomServer.Domain.Commands.Bookings.CreateBooking;
 using BlossomServer.Domain.Commands.Bookings.UpdateBooking;
 using BlossomServer.Domain.Commands.Bookings.UpdateBookingStatus;
 using BlossomServer.Domain.Commands.Categories.CreateCategory;
 using BlossomServer.Domain.Commands.Categories.DeleteCategory;
 using BlossomServer.Domain.Commands.Categories.UpdateCategory;
+using BlossomServer.Domain.Commands.ContactResponses.CreateContactResponse;
+using BlossomServer.Domain.Commands.Contacts.CreateContact;
 using BlossomServer.Domain.Commands.ConversationParticipants.CreateConversationParticipant;
 using BlossomServer.Domain.Commands.Conversations.CreateConversation;
+using BlossomServer.Domain.Commands.EmailReminders.AddReminder;
+using BlossomServer.Domain.Commands.EmailReminders.UpdateReminder;
+using BlossomServer.Domain.Commands.EmailReminders.UpdateStatus;
+using BlossomServer.Domain.Commands.Files.CreateFile;
+using BlossomServer.Domain.Commands.Files.DeleteFile;
 using BlossomServer.Domain.Commands.Files.UploadFile;
 using BlossomServer.Domain.Commands.Mails.SendMail;
 using BlossomServer.Domain.Commands.Messages.CreateMessage;
@@ -32,14 +42,17 @@ using BlossomServer.Domain.Commands.ServiceOptions.UpdateServiceOption;
 using BlossomServer.Domain.Commands.Services.CreateService;
 using BlossomServer.Domain.Commands.Services.DeleteService;
 using BlossomServer.Domain.Commands.Services.UpdateService;
+using BlossomServer.Domain.Commands.Subscribers.Subscribe;
 using BlossomServer.Domain.Commands.Technicians.CreateTechnician;
 using BlossomServer.Domain.Commands.Technicians.DeleteTechnician;
 using BlossomServer.Domain.Commands.Technicians.UpdateTechnician;
 using BlossomServer.Domain.Commands.Users.ChangePassword;
 using BlossomServer.Domain.Commands.Users.CreateUser;
 using BlossomServer.Domain.Commands.Users.DeleteUser;
+using BlossomServer.Domain.Commands.Users.ForgotPassword;
 using BlossomServer.Domain.Commands.Users.Login;
 using BlossomServer.Domain.Commands.Users.RefreshToken;
+using BlossomServer.Domain.Commands.Users.ResetPassword;
 using BlossomServer.Domain.Commands.Users.UpdateUser;
 using BlossomServer.Domain.Commands.WorkSchedules.CreateWorkSchedule;
 using BlossomServer.Domain.Commands.WorkSchedules.DeleteWorkSchedule;
@@ -67,6 +80,8 @@ namespace BlossomServer.Domain.Extensions
             services.AddScoped<IRequestHandler<ChangePasswordCommand>, ChangePasswordCommandHandler>();
             services.AddScoped<IRequestHandler<LoginUserCommand, object>, LoginUserCommandHandler>();
             services.AddScoped<IRequestHandler<RefreshTokenCommand, object>, RefreshTokenCommandHandler>();
+            services.AddScoped<IRequestHandler<ForgotPasswordCommand>, ForgotPasswordCommandHandler>();
+            services.AddScoped<IRequestHandler<ResetPasswordCommand>, ResetPasswordCommandHandler>();
 
             // Booking
             services.AddScoped<IRequestHandler<CreateBookingCommand>, CreateBookingCommandHandler>();
@@ -121,7 +136,9 @@ namespace BlossomServer.Domain.Extensions
             services.AddScoped<IRequestHandler<CreateRefreshTokenCommand>, CreateRefreshTokenCommandHandler>();
 
             // File
+            services.AddScoped<IRequestHandler<CreateFileCommand>, CreateFileCommandHandler>();
             services.AddScoped<IRequestHandler<UploadFileCommand, string>, UploadFileCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteFileCommand>, DeleteFileCommandHandler>();
 
             // Service Options
             services.AddScoped<IRequestHandler<CreateServiceOptionCommand>, CreateServiceOptionCommandHandler>();
@@ -143,6 +160,25 @@ namespace BlossomServer.Domain.Extensions
 
             // Email
             services.AddScoped<IRequestHandler<SendMailCommand>, SendMailCommandHandler>();
+
+            // Subcriber
+            services.AddScoped<IRequestHandler<SubscribeCommand>, SubscribeCommandHandler>();
+
+            // Contact
+            services.AddScoped<IRequestHandler<CreateContactCommand>, CreateContactCommandHandler>();
+
+            // Contact Response
+            services.AddScoped<IRequestHandler<CreateContactResponseCommand>, CreateContactResponseCommandHandler>();
+
+            // Blog
+            services.AddScoped<IRequestHandler<CreateBlogCommand>, CreateBlogCommandHandler>();
+            services.AddScoped<IRequestHandler<DeleteBlogCommand>, DeleteBlogCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdateBlogCommand>, UpdateBlogCommandHandler>();
+
+            // Email Reminder
+            services.AddScoped<IRequestHandler<AddReminderCommand>, AddReminderCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdateReminderCommand>, UpdateReminderCommandHandler>();
+            services.AddScoped<IRequestHandler<UpdateReminderStatusCommand>, UpdateReminderStatusCommandHandler>();
 
             return services;
         }

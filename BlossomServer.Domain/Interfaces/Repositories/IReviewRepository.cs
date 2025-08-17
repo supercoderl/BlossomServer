@@ -9,5 +9,14 @@ namespace BlossomServer.Domain.Interfaces.Repositories
 {
     public interface IReviewRepository : IRepository<Review, Guid>
     {
+        Task<IEnumerable<Review>> GetAllReviewsBySQL(
+            string searchTerm,
+            bool includeDeleted,
+            int page,
+            int pageSize,
+            string sortColumn,
+            string sortDirection,
+            CancellationToken cancellationToken = default
+        );
     }
 }

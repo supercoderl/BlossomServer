@@ -1,11 +1,9 @@
-﻿using BlossomServer.Application.Extensions;
-using BlossomServer.Application.ViewModels;
+﻿using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Promotions;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Interfaces.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlossomServer.Application.Queries.Promotions.GetAll
 {
@@ -27,28 +25,19 @@ namespace BlossomServer.Application.Queries.Promotions.GetAll
             GetAllPromotionsQuery request,
             CancellationToken cancellationToken)
         {
-            var promotionsQuery = _promotionRepository
-                .GetAllAsNoTracking()
-                .IgnoreQueryFilters()
-                .Where(x => request.IncludeDeleted || x.DeletedAt == null);
+            var results = await _promotionRepository.GetAllPromotionsBySQL(
+                request.SearchTerm,
+                request.IncludeDeleted,
+                request.Query.Page,
+                request.Query.PageSize,
+                request.SortQuery?.Query ?? "Id",
+                "ASC",
+                cancellationToken
+            );
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
-                promotionsQuery = promotionsQuery.Where(s => EF.Functions.Like(s.Code, $"%{request.SearchTerm}%"));
-            }
+            var promotions = results.Select(p => PromotionViewModel.FromPromotion(p)).ToList();
 
-            var totalCount = await promotionsQuery.CountAsync(cancellationToken);
-
-            promotionsQuery = promotionsQuery.GetOrderedQueryable(request.SortQuery, _sortingExpressionProvider);
-
-            var promotions = await promotionsQuery
-                .Skip((request.Query.Page - 1) * request.Query.PageSize)
-                .Take(request.Query.PageSize)
-                .Select(promotion => PromotionViewModel.FromPromotion(promotion))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<PromotionViewModel>(
-                totalCount, promotions, request.Query.Page, request.Query.PageSize);
+            return new PagedResult<PromotionViewModel>(results.Count(), promotions, request.Query.Page, request.Query.PageSize);
         }
     }
 }

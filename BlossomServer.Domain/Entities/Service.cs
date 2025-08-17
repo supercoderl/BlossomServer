@@ -52,6 +52,8 @@ namespace BlossomServer.Domain.Entities
         public void SetDurationMinutes(int? durationMinutes) { DurationMinutes = durationMinutes; }
         public void SetPrice(decimal? price) { Price = price; }
         public void SetRepresentativeImage(string? representativeImage) { RepresentativeImage = representativeImage; }
-        public void SetUpdatedAt() { UpdatedAt = TimeZoneHelper.GetLocalTimeNow(); }
+        public void SetCreatedAt(DateTime createdAt) { CreatedAt = createdAt; }
+        public void SetUpdatedAt(DateTime? updatedAt) { UpdatedAt = updatedAt.HasValue ? updatedAt.Value : TimeZoneHelper.GetLocalTimeNow(); }
+        public void SetServiceOptions(ICollection<ServiceOption> serviceOptions) { ServiceOptions = serviceOptions; }
     }
 }

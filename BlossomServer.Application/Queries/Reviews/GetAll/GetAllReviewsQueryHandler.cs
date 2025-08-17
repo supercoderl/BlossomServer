@@ -1,11 +1,9 @@
-﻿using BlossomServer.Application.Extensions;
-using BlossomServer.Application.ViewModels;
+﻿using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Reviews;
 using BlossomServer.Application.ViewModels.Sorting;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Interfaces.Repositories;
 using MediatR;
-using Microsoft.EntityFrameworkCore;
 
 namespace BlossomServer.Application.Queries.Reviews.GetAll
 {
@@ -27,28 +25,19 @@ namespace BlossomServer.Application.Queries.Reviews.GetAll
             GetAllReviewsQuery request,
             CancellationToken cancellationToken)
         {
-            var reviewsQuery = _reviewRepository
-                .GetAllAsNoTracking()
-                .IgnoreQueryFilters()
-                .Where(x => request.IncludeDeleted || x.DeletedAt == null);
+            var results = await _reviewRepository.GetAllReviewsBySQL(
+                request.SearchTerm,
+                request.IncludeDeleted,
+                request.Query.Page,
+                request.Query.PageSize,
+                request.SortQuery?.Query ?? "Id",
+                "ASC",
+                cancellationToken
+            );
 
-            if (!string.IsNullOrWhiteSpace(request.SearchTerm))
-            {
+            var reviews = results.Select(r => ReviewViewModel.FromReview(r)).ToList();
 
-            }
-
-            var totalCount = await reviewsQuery.CountAsync(cancellationToken);
-
-            reviewsQuery = reviewsQuery.GetOrderedQueryable(request.SortQuery, _sortingExpressionProvider);
-
-            var reviews = await reviewsQuery
-                .Skip((request.Query.Page - 1) * request.Query.PageSize)
-                .Take(request.Query.PageSize)
-                .Select(review => ReviewViewModel.FromReview(review))
-                .ToListAsync(cancellationToken);
-
-            return new PagedResult<ReviewViewModel>(
-                totalCount, reviews, request.Query.Page, request.Query.PageSize);
+            return new PagedResult<ReviewViewModel>(results.Count(), reviews, request.Query.Page, request.Query.PageSize);
         }
     }
 }

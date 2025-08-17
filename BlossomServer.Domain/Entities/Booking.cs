@@ -69,6 +69,11 @@ namespace BlossomServer.Domain.Entities
         public void SetGuestName(string? guestName) { GuestName = guestName; }
         public void SetGuestPhone(string? guestPhone) { GuestPhone = guestPhone; }
         public void SetGuestEmail(string? guestEmail) { GuestEmail = guestEmail; }
-        public void SetUpdatedAt() { UpdatedAt = TimeZoneHelper.GetLocalTimeNow(); }
+        public void SetUpdatedAt(DateTime? updatedAt) { UpdatedAt = updatedAt.HasValue ? updatedAt.Value : TimeZoneHelper.GetLocalTimeNow(); }
+        public void SetCreatedAt(DateTime createdAt) { CreatedAt = createdAt; }
+        public void SetBookingDetails(ICollection<BookingDetail> bookingDetails) { BookingDetails = bookingDetails; }
+
+        public void SetTechnician(Technician? technician) { Technician = technician; }
+        public void SetCustomer(User? customer) { Customer = customer; }
     }
 }

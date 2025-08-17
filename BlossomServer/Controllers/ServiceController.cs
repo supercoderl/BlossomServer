@@ -10,6 +10,7 @@ using BlossomServer.Swagger;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using StackExchange.Profiling;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace BlossomServer.Controllers
@@ -32,19 +33,44 @@ namespace BlossomServer.Controllers
         [HttpGet]
         [SwaggerOperation("Get a list of all services")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<ServiceViewModel>>))]
-        public async Task<IActionResult> GetAllUsersAsync(
+        public async Task<IActionResult> GetAllServicesAsync(
             [FromQuery] PageQuery query,
             [FromQuery] string searchTerm = "",
             [FromQuery] bool includeDeleted = false,
             [FromQuery] [SortableFieldsAttribute<ServiceViewModelSortProvider, ServiceViewModel, Service>]
         SortQuery? sortQuery = null)
         {
-            var services = await _serviceService.GetAllServicesAsync(
-                query,
-                includeDeleted,
-                searchTerm,
-                sortQuery);
-            return Response(services);
+            using (MiniProfiler.Current.Step("🔍 Query Services"))
+            {
+                var services = await _serviceService.GetAllServicesAsync(
+                    query,
+                    includeDeleted,
+                    searchTerm,
+                    sortQuery);
+                return Response(services);
+            }
+        }
+
+        [AllowAnonymous]
+        [HttpGet("by-sql")]
+        [SwaggerOperation("Get a list of all services")]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<ServiceViewModel>>))]
+        public async Task<IActionResult> GetAllServicesBySQLAsync(
+            [FromQuery] PageQuery query,
+            [FromQuery] string searchTerm = "",
+            [FromQuery] bool includeDeleted = false,
+            [FromQuery] [SortableFieldsAttribute<ServiceViewModelSortProvider, ServiceViewModel, Service>]
+        SortQuery? sortQuery = null)
+        {
+            using (MiniProfiler.Current.Step("🔍 Query Services By SQL"))
+            {
+                var services = await _serviceService.GetAllServicesBySQLAsync(
+                    query,
+                    includeDeleted,
+                    searchTerm,
+                    sortQuery);
+                return Response(services);
+            }
         }
 
         [AllowAnonymous]

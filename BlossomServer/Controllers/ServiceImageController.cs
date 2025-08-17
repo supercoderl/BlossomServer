@@ -29,6 +29,7 @@ namespace BlossomServer.Controllers
         }
 
         [HttpGet]
+        [AllowAnonymous]
         [SwaggerOperation("Get a list of all service images")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<PagedResult<ServiceImageViewModel>>))]
         public async Task<IActionResult> GetAllUsersAsync(

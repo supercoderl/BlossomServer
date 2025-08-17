@@ -52,6 +52,7 @@ namespace BlossomServer.Domain.Commands.Services.UpdateService
             {
                 string url = await Bus.QueryAsync(new UploadFileCommand(
                     request.RepresentativeImage,
+                    service.RepresentativeImage,
                     null,
                     false
                 ));
@@ -60,7 +61,7 @@ namespace BlossomServer.Domain.Commands.Services.UpdateService
             }
 
             service.SetCategoryId(request.CategoryId);
-            service.SetUpdatedAt();
+            service.SetUpdatedAt(null);
 
             _serviceRepository.Update(service);
 
