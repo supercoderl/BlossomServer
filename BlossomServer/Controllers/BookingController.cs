@@ -107,5 +107,14 @@ namespace BlossomServer.Controllers
             await _bookingService.UpdateBookingStatusAsync(viewModel);
             return Response(viewModel);
         }
+
+        [HttpGet("schedule")]
+        [SwaggerOperation("Get a schedule")]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<IEnumerable<object>>))]
+        public async Task<IActionResult> GetScheduleByDateAsync([FromQuery] string selectedDate)
+        {
+            var result = await _bookingService.GetScheduleByDateAsync(selectedDate);
+            return Response(result);
+        }
     }
 }

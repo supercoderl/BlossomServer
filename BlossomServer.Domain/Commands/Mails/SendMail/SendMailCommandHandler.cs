@@ -5,8 +5,6 @@ using MediatR;
 using Microsoft.Extensions.Options;
 using System.Net;
 using System.Net.Mail;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlossomServer.Domain.Commands.Mails.SendMail
 {
@@ -19,7 +17,7 @@ namespace BlossomServer.Domain.Commands.Mails.SendMail
             IUnitOfWork unitOfWork,
             INotificationHandler<DomainNotification> notification,
             IOptions<MailSettings> settings
-        ) : base( bus, unitOfWork, notification )
+        ) : base(bus, unitOfWork, notification)
         {
             _mail = settings.Value;
         }

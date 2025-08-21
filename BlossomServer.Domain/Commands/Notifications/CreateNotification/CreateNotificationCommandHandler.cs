@@ -3,11 +3,6 @@ using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Shared.Events.Notification;
 using MediatR;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlossomServer.Domain.Commands.Notifications.CreateNotification
 {
@@ -33,14 +28,24 @@ namespace BlossomServer.Domain.Commands.Notifications.CreateNotification
                 request.NotificationId,
                 request.UserId,
                 request.Title,
-                request.Message
+                request.Message,
+                request.NotificationType,
+                request.Priority,
+                request.ExpiresAt,
+                request.ActionUrl,
+                request.RelatedEntityId
             );
 
             _notificationRepository.Add(notification);
 
-            if(await CommitAsync())
+            if (await CommitAsync())
             {
-                await Bus.RaiseEventAsync(new NotificationCreatedEvent(notification.Id));
+                await Bus.RaiseEventAsync(new NotificationCreatedEvent(
+                    notification.Id,
+                    notification.UserId,
+                    notification,
+                    notification.UserId == Guid.Empty ? "group" : "connection"
+                ));
             }
         }
     }

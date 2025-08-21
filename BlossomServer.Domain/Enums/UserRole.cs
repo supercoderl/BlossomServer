@@ -12,6 +12,7 @@ namespace BlossomServer.Domain.Enums
         Manager,
         Technician,
         Customer,
-        Bot
+        Bot,
+        Guest
     }
 }

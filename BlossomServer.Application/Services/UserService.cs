@@ -8,6 +8,7 @@ using BlossomServer.Domain.Commands.Users.ChangePassword;
 using BlossomServer.Domain.Commands.Users.CreateUser;
 using BlossomServer.Domain.Commands.Users.DeleteUser;
 using BlossomServer.Domain.Commands.Users.ForgotPassword;
+using BlossomServer.Domain.Commands.Users.GenerateGuestToken;
 using BlossomServer.Domain.Commands.Users.Login;
 using BlossomServer.Domain.Commands.Users.RefreshToken;
 using BlossomServer.Domain.Commands.Users.ResetPassword;
@@ -120,6 +121,11 @@ namespace BlossomServer.Application.Services
         public async Task ResetPasswordAsync(ResetPasswordViewModel viewModel)
         {
             await _bus.SendCommandAsync(new ResetPasswordCommand(viewModel.Code, viewModel.NewPassword));
+        }
+
+        public async Task<string> GenerateGuestTokenAsync(string clientId, string userAgent)
+        {
+            return await _bus.QueryAsync(new GenerateGuestTokenCommand(clientId, userAgent));
         }
     }
 }

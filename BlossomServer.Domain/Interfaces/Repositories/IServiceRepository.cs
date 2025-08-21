@@ -18,7 +18,7 @@ namespace BlossomServer.Domain.Interfaces.Repositories
             string sortDirection,
             CancellationToken cancellationToken = default
         );
-        Task<IEnumerable<object>> GetServicesPopularityRanking(CancellationToken cancellationToken);
+        Task<IEnumerable<object>> GetServicesPopularityRanking(string currentDateStart, string currentDateEnd, string previousDateStart, string previousDateEnd, CancellationToken cancellationToken);
         Task<decimal> GetAverageServiceValue(string dateStart, string dateEnd, CancellationToken cancellationToken = default);
     }
 }

@@ -1,16 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace BlossomServer.Shared.Events.Notification
+﻿namespace BlossomServer.Shared.Events.Notification
 {
     public sealed class NotificationCreatedEvent : DomainEvent
     {
-        public NotificationCreatedEvent(Guid notificationId) : base(notificationId)
+        public Guid ReceiverId { get; set; }
+        public object Notification { get; set; }
+        public string Type { get; set; }
+
+        public NotificationCreatedEvent(
+            Guid notificationId,
+            Guid receiverId,
+            object notification,
+            string type
+        ) : base(notificationId)
         {
-            
+            ReceiverId = receiverId;
+            Notification = notification;
+            Type = type;
         }
     }
 }

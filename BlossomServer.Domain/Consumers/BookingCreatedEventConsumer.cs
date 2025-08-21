@@ -1,12 +1,10 @@
-﻿using BlossomServer.Domain.Commands.Mails.SendMail;
+﻿using BlossomServer.Domain.Commands.BookingDetails.CreateBookingDetail;
+using BlossomServer.Domain.Commands.Mails.SendMail;
+using BlossomServer.Domain.Commands.Notifications.CreateNotification;
+using BlossomServer.Domain.Interfaces;
 using BlossomServer.Shared.Events.Booking;
 using MassTransit;
 using Microsoft.Extensions.Logging;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace BlossomServer.Domain.Consumers
 {
@@ -14,11 +12,17 @@ namespace BlossomServer.Domain.Consumers
     {
         private readonly IPublishEndpoint _publishEndpoint;
         private readonly ILogger<BookingCreatedEventConsumer> _logger;
+        private readonly IMediatorHandler _bus;
 
-        public BookingCreatedEventConsumer(IPublishEndpoint publishEndpoint, ILogger<BookingCreatedEventConsumer> logger)
+        public BookingCreatedEventConsumer(
+            IPublishEndpoint publishEndpoint, 
+            ILogger<BookingCreatedEventConsumer> logger,
+            IMediatorHandler bus
+        )
         {
             _publishEndpoint = publishEndpoint;
             _logger = logger;
+            _bus = bus;
         }
 
         public async Task Consume(ConsumeContext<BookingCreatedEvent> context)
@@ -54,7 +58,51 @@ namespace BlossomServer.Domain.Consumers
                 false
             );
 
+            var bookingDetailCommand = new CreateBookingDetailCommand(
+                Guid.NewGuid(),
+                context.Message.AggregateId,
+                context.Message.ServiceId,
+                context.Message.ServiceOptionId,
+                context.Message.Quantity,
+                context.Message.Price
+            );
+
+            var adminNotificationCommand = new CreateNotificationCommand(
+                Guid.NewGuid(),
+                Guid.Empty, // Admin notification
+                "Booking Arrived",
+                "You have a new booking!",
+                Enums.NotificationType.NewBooking,
+                0,
+                null,
+                null,
+                null
+            );
+
+            CreateNotificationCommand? technicianNotificationCommand = null;
+            if (context.Message.ReceiverId.HasValue)
+            {
+                technicianNotificationCommand = new CreateNotificationCommand(
+                    Guid.NewGuid(),
+                    context.Message.ReceiverId.Value,
+                    "You Have a New Appointment",
+                    $"A customer has booked at [{context.Message.ScheduleTime.ToString("yyyy/MM/dd - HH:mm:ss")}]. Please confirm.",
+                    Enums.NotificationType.NewBooking,
+                    0,
+                    null,
+                    null,
+                    null
+                );
+            }
+
             await _publishEndpoint.Publish(emailCommand);
+            await _bus.SendCommandAsync(bookingDetailCommand);
+            await _publishEndpoint.Publish(adminNotificationCommand);
+
+            if (technicianNotificationCommand != null)
+            {
+                await _publishEndpoint.Publish(technicianNotificationCommand);
+            }
 
             _logger.LogInformation("Email queued for booking {BookingId}", context.Message.AggregateId);
         }

@@ -8,6 +8,6 @@ namespace BlossomServer.Application.Interfaces
 {
     public interface ISignalRService
     {
-        public Task SendData(string type, object data, string target, string? groupId = null, string? connectionId = null);
+        public Task SendData(string type, object data, string target, string? groupId = null, string? receiverId = null);
     }
 }

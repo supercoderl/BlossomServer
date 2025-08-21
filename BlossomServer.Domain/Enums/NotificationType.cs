@@ -1,0 +1,36 @@
+﻿namespace BlossomServer.Domain.Enums
+{
+    public enum NotificationType
+    {
+        BookingReminder,
+        BookingConfirmed,
+        BookingCancelled,
+        BookingRescheduled,
+        NewBooking,
+        WaitlistAvailable,
+        NoShow,
+        ServiceRecommendation,
+        NewServiceAvailable,
+        TreatmentReminder,
+        SeasonalSpecial,
+        PaymentReceived,
+        PaymentPending,
+        PaymentFailed,
+        DepositRequired,
+        PromotionalOffer,
+        PaymentDue,
+        LoyaltyReward,
+        BirthdaySpecial,
+        ReferralReward,
+        FirstTimeDiscount,
+        StoreHoursChange,
+        StaffChange,
+        WeatherAlert,
+        HolidayClosure,
+        ReviewRequest,
+        PhotoShare,
+        NailCareReminder,
+        MaintenanceReminder,
+        NewChatMessage
+    }
+}

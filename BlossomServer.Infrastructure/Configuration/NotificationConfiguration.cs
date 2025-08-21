@@ -21,7 +21,19 @@ namespace BlossomServer.Infrastructure.Configuration
 
             builder.Property(n => n.Message).IsRequired();
 
-            builder.Property(n => n.IsRead).IsRequired();   
+            builder.Property(n => n.IsRead).IsRequired();
+
+            builder.Property(n => n.NotificationType)
+                .IsRequired()
+                .HasConversion<string>();
+
+            builder.Property(n => n.Priority).IsRequired();
+
+            builder.Property(n => n.ExpiresAt);
+
+            builder.Property(n => n.ActionUrl);
+
+            builder.Property(n => n.RelatedEntityId);
 
             builder.Property(n => n.CreatedAt).IsRequired();
 

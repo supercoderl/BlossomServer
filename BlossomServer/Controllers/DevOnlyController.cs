@@ -1,4 +1,6 @@
-﻿using BlossomServer.Application.Interfaces;
+﻿using BlossomServer.Application.Hubs;
+using BlossomServer.Application.Interfaces;
+using BlossomServer.Application.ViewModels.Notifications;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Models;
 using MediatR;
@@ -30,11 +32,19 @@ namespace BlossomServer.Controllers
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<object>))]
         public async Task<IActionResult> TestAdminNotificationAsync()
         {
-            await _signalRService.SendData("system", new
-            {
-                NotificationId = Guid.NewGuid(),
-                Message = "You have new booking!!"
-            }, "group", "administrators");
+            await _signalRService.SendData("system", NotificationViewModel.FromNotification(
+                new Domain.Entities.Notification(
+                    Guid.NewGuid(),
+                    Guid.NewGuid(),
+                    "Booking Arrived",
+                    "You have a new booking!",
+                    Domain.Enums.NotificationType.NewBooking,
+                    0,
+                    null,
+                    null,
+                    null
+                )), 
+            "group", "administrators");
             return Response();
         }
 
@@ -44,6 +54,16 @@ namespace BlossomServer.Controllers
         public async Task<IActionResult> TestSendMessageAsync([FromBody] string content)
         {
             var result = await _messageService.SendPromptAsync(content);
+            return Response(result);
+        }
+
+        [HttpGet("connections")]
+        [SwaggerOperation("Test get connections")]
+        [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<Dictionary<string, string>>))]
+        public async Task<IActionResult> TestGetConnectionAsync()
+        {
+            await Task.CompletedTask;
+            var result = TrackerHub.GetConnections();
             return Response(result);
         }
     }

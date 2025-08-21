@@ -1,15 +1,16 @@
 ﻿using BlossomServer.Application.Interfaces;
-using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Dashboards;
 using BlossomServer.Domain.Notifications;
 using BlossomServer.Models;
 using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Swashbuckle.AspNetCore.Annotations;
 
 namespace BlossomServer.Controllers
 {
     [ApiController]
+    [Authorize]
     [Route("/api/v1/[controller]")]
     public sealed class DashboardController : ApiController
     {
@@ -22,11 +23,11 @@ namespace BlossomServer.Controllers
             _dashboardService = dashboardService;
         }
 
-        [HttpGet]
+        [HttpPost("analytics")]
         [SwaggerOperation("Get business analytics dashboard")]
         [SwaggerResponse(200, "Request successful", typeof(ResponseMessage<object>))]
         public async Task<IActionResult> GetBusinessAnalyticsAsync(
-            [FromQuery] BusinessAnalyticsRequest request
+            [FromBody] BusinessAnalyticsRequest request
         )
         {
             var result = await _dashboardService.GetBusinessAnalyticsAsync(request.Query, request.CurrentRange, request.PreviousRange);

@@ -6,6 +6,7 @@ using BlossomServer.Application.Queries.Blogs.GetById;
 using BlossomServer.Application.Queries.Bookings.GetAll;
 using BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician;
 using BlossomServer.Application.Queries.Bookings.GetById;
+using BlossomServer.Application.Queries.Bookings.GetScheduleByDate;
 using BlossomServer.Application.Queries.Categories.GetAll;
 using BlossomServer.Application.Queries.Categories.GetById;
 using BlossomServer.Application.Queries.Contacts.GetAll;
@@ -14,6 +15,7 @@ using BlossomServer.Application.Queries.Dashboards.Admin;
 using BlossomServer.Application.Queries.Messages.CheckBot;
 using BlossomServer.Application.Queries.Messages.FindConversation;
 using BlossomServer.Application.Queries.Messages.GetAll;
+using BlossomServer.Application.Queries.Notifications.GetAll;
 using BlossomServer.Application.Queries.Payments.GetAll;
 using BlossomServer.Application.Queries.Promotions.CheckByCode;
 using BlossomServer.Application.Queries.Promotions.GetAll;
@@ -38,6 +40,7 @@ using BlossomServer.Application.ViewModels.Bookings;
 using BlossomServer.Application.ViewModels.Categories;
 using BlossomServer.Application.ViewModels.Contacts;
 using BlossomServer.Application.ViewModels.Messages;
+using BlossomServer.Application.ViewModels.Notifications;
 using BlossomServer.Application.ViewModels.Payments;
 using BlossomServer.Application.ViewModels.Promotions;
 using BlossomServer.Application.ViewModels.Reviews;
@@ -50,6 +53,7 @@ using BlossomServer.Application.ViewModels.WorkSchedules;
 using BlossomServer.Domain.Entities;
 using BlossomServer.Shared.Events.Admin;
 using BlossomServer.Shared.Events.Message;
+using BlossomServer.Shared.Events.Notification;
 using BlossomServer.Shared.Events.ServiceImage;
 using MediatR;
 using Microsoft.Extensions.DependencyInjection;
@@ -80,6 +84,7 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<IContactResponseService, ContactResponseService>();
             services.AddScoped<IBlogService, BlogService>();
             services.AddScoped<IDashboardService, DashboardService>();
+            services.AddScoped<INotificationService, NotificationService>();    
 
             return services;
         }
@@ -94,6 +99,7 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<IRequestHandler<GetBookingByIdQuery, BookingViewModel?>, GetBookingByIdQueryHandler>();
             services.AddScoped<IRequestHandler<GetAllBookingsQuery, PagedResult<BookingViewModel>>, GetAllBookingsQueryHandler>();
             services.AddScoped<IRequestHandler<GetAllTimeSlotForTechnicianQuery, IEnumerable<ScheduleSlot>>, GetAllTimeSlotForTechnicianQueryHandler>();
+            services.AddScoped<IRequestHandler<GetScheduleByDateQuery, IEnumerable<object>>, GetScheduleByDateQueryHandler>();
 
             // Category
             services.AddScoped<IRequestHandler<GetCategoryByIdQuery, CategoryViewModel?>, GetCategoryByIdQueryHandler>();
@@ -143,6 +149,9 @@ namespace BlossomServer.Application.Extensions
             // Admin
             services.AddScoped<IRequestHandler<GetBusinessAnalyticsQuery, object>, GetBusinessAnalyticsQueryHandler>();
 
+            // Notification
+            services.AddScoped<IRequestHandler<GetAllNotificationsQuery, PagedResult<NotificationViewModel>>, GetAllNotificationsQueryHandler>();
+
             return services;
         }
 
@@ -161,6 +170,7 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<ISortingExpressionProvider<MessageViewModel, Message>, MessageViewModelSortProvider>();
             services.AddScoped<ISortingExpressionProvider<ContactViewModel, Contact>, ContactViewModelSortProvider>();
             services.AddScoped<ISortingExpressionProvider<BlogViewModel, Blog>, BlogViewModelSortProvider>();
+            services.AddScoped<ISortingExpressionProvider<NotificationViewModel, Notification>, NotificationViewModelSortProvider>();
 
             return services;
         }
@@ -171,11 +181,11 @@ namespace BlossomServer.Application.Extensions
             services.AddScoped<INotificationHandler<ServiceImageCreatedEvent>, ServiceImageEventHandler>();
             services.AddScoped<INotificationHandler<ServiceImageUploadProgressEvent>, ServiceImageEventHandler>();
 
-            // Admin
-            services.AddScoped<INotificationHandler<AdminNotificationRequiredEvent>, AdminNotificationRequiredEventHandler>();
-
             // Message
             services.AddScoped<INotificationHandler<MessageAnswerEvent>, MessageAnswerEventHandler>();
+
+            // Admin
+            services.AddScoped<INotificationHandler<NotificationCreatedEvent>, NotificationRequiredEventHandler>();
 
             return services;
         }

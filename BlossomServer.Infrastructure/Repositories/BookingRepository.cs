@@ -42,17 +42,25 @@ namespace BlossomServer.Infrastructure.Repositories
             {
                 return new
                 {
-                    TotalRevenue = reader.GetDecimal("TotalRevenue"),
-                    TransactionCount = reader.GetInt32("TransactionCount"),
-                    AverageTransaction = reader.GetDecimal("AverageTransaction")
+                    CurrentTotalRevenue = reader.GetDecimal("CurrentTotalRevenue"),
+                    PreviousTotalRevenue = reader.GetDecimal("PreviousTotalRevenue"),
+                    CurrentTransactionCount = reader.GetInt32("CurrentTransactionCount"),
+                    PreviousTransactionCount = reader.GetInt32("PreviousTransactionCount"),
+                    AvgTransactionDifference = reader.GetDecimal("AvgTransactionDifference"),
+                    RevenuePercentageChange = reader.GetDecimal("RevenuePercentageChange"),
+                    RevenueTrend = reader.GetString("RevenueTrend")
                 };
             }
 
             return new
             {
-                TotalRevenue = 0m,
-                TransactionCount = 0,
-                AverageTransaction = 0m
+                CurrentTotalRevenue = 0m,
+                PreviousTotalRevenue = 0m,
+                CurrentTransactionCount = 0,
+                PreviousTransactionCount = 0,
+                AvgTransactionDifference = 0m,
+                RevenuePercentageChange = 0m,
+                RevenueTrend = "Stable"
             };
         }
 
@@ -257,7 +265,7 @@ namespace BlossomServer.Infrastructure.Repositories
             return bookings;
         }
 
-        public async Task<int> GetBookingCountSQL(string dateStart, string dateEnd, CancellationToken cancellationToken = default)
+        public async Task<object> GetBookingCountSQL(string dateStart, string dateEnd, CancellationToken cancellationToken = default)
         {
             using var connection = new SqlConnection(_connectionString);
             await connection.OpenAsync(cancellationToken);
@@ -275,10 +283,23 @@ namespace BlossomServer.Infrastructure.Repositories
             // Read first result set
             while (await reader.ReadAsync(cancellationToken))
             {
-                return reader.GetInt32("TotalBookings");
+                return new {
+                    CurrentPeriodBookings = reader.GetInt32("CurrentPeriodBookings"),
+                    PreviousPeriodBookings = reader.GetInt32("PreviousPeriodBookings"),
+                    BookingsDifference = reader.GetInt32("BookingsDifference"),
+                    PercentageChange = reader.GetDecimal("PercentageChange"),
+                    Trend = reader.GetString("Trend")
+                };
             }
 
-            return 0;
+            return new
+            {
+                CurrentPeriodBookings = 0,
+                PreviousPeriodBookings = 0,
+                BookingsDifference = 0,
+                PercentageChange = 0m,
+                Trend = "Stable"
+            };
         }
 
         public async Task<IEnumerable<object>> GetBookingStatusBreakdownSQL(string dateStart, string dateEnd, CancellationToken cancellationToken)
@@ -396,6 +417,44 @@ namespace BlossomServer.Infrastructure.Repositories
                 ReturningCustomers = 0,
                 CustomerRetentionRate = 0m
             };
+        }
+
+        public async Task<IEnumerable<object>> GetScheduleByDateSQL(string date, CancellationToken cancellationToken)
+        {
+            var schedules = new List<object>();
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync(cancellationToken);
+
+            using var command = new SqlCommand("sp_getScheduleByDate", connection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            command.Parameters.AddWithValue("@ScheduleDate", date);
+
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+            // Read first result set
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                var schedule = new
+                {
+                    Id = reader.GetGuid("Id"),
+                    CustomerName = reader.GetString("CustomerName"),
+                    TechnicianName = reader.GetString("TechnicianName"),
+                    CustomerPhone = reader.GetString("CustomerPhone"),
+                    StartTime = reader.GetString("StartTime"),
+                    EndTime = reader.GetString("EndTime"),
+                    DurationMinutes = reader.GetInt32("DurationMinutes"),
+                    Status = (BookingStatus)Enum.Parse(typeof(BookingStatus), reader.GetString("Status")),
+                    Note = reader.IsDBNull("Note") ? null : reader.GetString("Note")
+                };
+
+                schedules.Add(schedule);
+            }
+
+            return schedules;
         }
 
         public async Task<IEnumerable<(DateTime start, TimeSpan duration)>> GetScheduleTimes(Guid technicianId, DateTime selectedDate)

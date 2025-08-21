@@ -21,7 +21,7 @@ namespace BlossomServer.Domain.Interfaces.Repositories
            CancellationToken cancellationToken = default
         );
 
-        Task<int> GetBookingCountSQL(string dateStart, string dateEnd, CancellationToken cancellationToken);
+        Task<object> GetBookingCountSQL(string dateStart, string dateEnd, CancellationToken cancellationToken);
 
         Task<int> GetCustomerCountSQL(string dateStart, string dateEnd, CancellationToken cancellationToken);
 
@@ -38,5 +38,7 @@ namespace BlossomServer.Domain.Interfaces.Repositories
         );
 
         Task<decimal> GetConversionRateSQL(string dateStart, string dateEnd, CancellationToken cancellationToken);
+
+        Task<IEnumerable<object>> GetScheduleByDateSQL(string date, CancellationToken cancellationToken);
     }
 }

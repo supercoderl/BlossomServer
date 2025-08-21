@@ -26,5 +26,6 @@ namespace BlossomServer.Application.Interfaces
         public Task<object> RefreshTokenAsync(RefreshTokenViewModel viewModel);
         public Task<Guid> ForgotPasswordAsync(ForgotPasswordViewModel viewModel);
         public Task ResetPasswordAsync(ResetPasswordViewModel viewModel);
+        public Task<string> GenerateGuestTokenAsync(string clientId, string userAgent);
     }
 }

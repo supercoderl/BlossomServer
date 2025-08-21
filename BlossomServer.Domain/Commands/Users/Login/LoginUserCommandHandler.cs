@@ -74,9 +74,7 @@ namespace BlossomServer.Domain.Commands.Users.Login
 
             return new
             {
-                AccessToken = TokenHelper.BuildToken(
-                user,
-                _tokenSettings),
+                AccessToken = TokenHelper.BuildToken(user, _tokenSettings),
                 RefreshToken = refreshToken,
                 UserInfo = new
                 {

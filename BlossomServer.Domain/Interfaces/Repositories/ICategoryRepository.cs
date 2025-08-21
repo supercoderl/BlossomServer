@@ -13,5 +13,6 @@ namespace BlossomServer.Domain.Interfaces.Repositories
             string sortDirection,
             CancellationToken cancellationToken = default
         );
+        Task<List<object>> GetCategoriesWithServicesDetailSQL(CancellationToken cancellationToken);
     }
 }

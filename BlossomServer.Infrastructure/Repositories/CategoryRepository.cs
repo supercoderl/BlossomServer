@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Text;
+using System.Threading;
 
 namespace BlossomServer.Infrastructure.Repositories
 {
@@ -52,6 +53,38 @@ namespace BlossomServer.Infrastructure.Repositories
 
                 category.SetCreatedAt(reader.GetDateTime("CreatedAt"));
                 category.SetUpdatedAt(reader.IsDBNull("UpdatedAt") ? null : reader.GetDateTime("UpdatedAt"));
+
+                categories.Add(category);
+            }
+
+            return categories;
+        }
+
+        public async Task<List<object>> GetCategoriesWithServicesDetailSQL(CancellationToken cancellationToken = default)
+        {
+            var categories = new List<object>();
+
+            using var connection = new SqlConnection(_connectionString);
+            await connection.OpenAsync(cancellationToken);
+
+            using var command = new SqlCommand("sp_getCategoriesWithServicesDetailed", connection)
+            {
+                CommandType = CommandType.StoredProcedure
+            };
+
+            using var reader = await command.ExecuteReaderAsync(cancellationToken);
+
+            // Read first result set (Categories)
+            while (await reader.ReadAsync(cancellationToken))
+            {
+                var category = new
+                {
+                    CategoryId = reader.GetGuid("CategoryId"),
+                    CategoryName = reader.GetString("CategoryName"),
+                    CategoryIsActive = reader.GetBoolean("CategoryIsActive"),
+                    ServiceCount = reader.GetInt32("ServiceCount"),
+                    ServiceOptionCount = reader.GetInt32("ServiceOptionCount")
+                };
 
                 categories.Add(category);
             }

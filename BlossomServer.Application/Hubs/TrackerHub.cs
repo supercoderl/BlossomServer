@@ -2,6 +2,7 @@
 using BlossomServer.Domain.Enums;
 using BlossomServer.Domain.Interfaces;
 using BlossomServer.Domain.Interfaces.Repositories;
+using BlossomServer.SharedKernel.Utils;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.SignalR;
 using System.Security.Claims;
@@ -121,15 +122,28 @@ namespace BlossomServer.Application.Hubs
             {
                 var user = await _userRepository.GetByIdAsync(Guid.Parse(UserId));
 
-                if (user is null)
-                    throw new HubException("User not found.");
-
                 var userViewModel = UserViewModel.FromUser(
-                    user,
+                    user == null ? new Domain.Entities.User(
+                        Guid.Parse(UserId),
+                        string.Empty,
+                        Context.User?.FindFirst(ClaimTypes.Name)?.Value ?? string.Empty,
+                        string.Empty,
+                        Context.User?.FindFirst(ClaimTypes.Email)?.Value ?? string.Empty,
+                        string.Empty,
+                        "https://cdn1.iconfinder.com/data/icons/emoticon-of-avatar-woman/128/08_woman_mocking_avatar_emoticon_smiley_people_user-512.png",
+                        null,
+                        Gender.Unknow,
+                        null,
+                        DateOnly.FromDateTime(TimeZoneHelper.GetLocalTimeNow()),
+                        UserRole.Guest,
+                        UserStatus.Active
+                    ) : user,
                     GetDevice(),
                     null,
                     Context.ConnectionId
                 );
+
+                bool shouldNotify = false;
 
                 lock (_Connections)
                 {
@@ -142,6 +156,13 @@ namespace BlossomServer.Application.Hubs
 
                     _Connections.Add(userViewModel);
                     _ConnectionsMap[UserId] = Context.ConnectionId;
+
+                    shouldNotify = true;
+                }
+
+                if (shouldNotify)
+                {
+                    await Clients.Others.SendAsync("userOnline", UserId);
                 }
 
                 await Clients.Caller.SendAsync("getProfileInfo", userViewModel);
@@ -171,12 +192,21 @@ namespace BlossomServer.Application.Hubs
                         );
                     }
 
+                    bool shouldNotify = false;
+
                     lock (_Connections)
                     {
                         _Connections.Remove(user);
 
                         // Remove mapping
                         _ConnectionsMap.Remove(user.Id.ToString());
+
+                        shouldNotify = true;
+                    }
+
+                    if (shouldNotify)
+                    {
+                        await Clients.Others.SendAsync("userOffline", user.Id);
                     }
                 }
             }
@@ -226,6 +256,18 @@ namespace BlossomServer.Application.Hubs
                 }
                 return userId;
             }
+        }
+
+        public static string? GetConnectionId(string? userId)
+        {
+            if (userId == null) return null;
+
+            return _ConnectionsMap.TryGetValue(userId, out var connectionId) ? connectionId : null;
+        }
+
+        public static Dictionary<string, string> GetConnections()
+        {
+            return _ConnectionsMap;
         }
     }
 }

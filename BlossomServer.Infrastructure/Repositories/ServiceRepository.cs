@@ -110,7 +110,7 @@ namespace BlossomServer.Infrastructure.Repositories
             return 0;
         }
 
-        public async Task<IEnumerable<object>> GetServicesPopularityRanking(CancellationToken cancellationToken)
+        public async Task<IEnumerable<object>> GetServicesPopularityRanking(string currentDateStart, string currentDateEnd, string previousDateStart, string previousDateEnd, CancellationToken cancellationToken)
         {
             var services = new List<object>();
 
@@ -121,6 +121,11 @@ namespace BlossomServer.Infrastructure.Repositories
             {
                 CommandType = CommandType.StoredProcedure
             };
+
+            command.Parameters.AddWithValue("@CurrentPeriodStart", currentDateStart);
+            command.Parameters.AddWithValue("@CurrentPeriodEnd", currentDateEnd);
+            command.Parameters.AddWithValue("@ComparisonPeriodStart", previousDateStart);
+            command.Parameters.AddWithValue("@ComparisonPeriodEnd", previousDateEnd);
 
             using var reader = await command.ExecuteReaderAsync(cancellationToken);
 
@@ -133,12 +138,21 @@ namespace BlossomServer.Infrastructure.Repositories
                     Price = reader.GetDecimal("Price"),
                     DurationMinutes = reader.GetInt32("DurationMinutes"),
                     BookingCount = reader.GetInt32("BookingCount"),
-                    TotalRevenue = reader.GetInt32("TotalRevenue"),
-                    AverageRating = reader.GetDecimal("AverageRating"),
+                    TotalRevenue = reader.GetDecimal("TotalRevenue"),
+                    AverageRating = reader.IsDBNull("AverageRating") ? 0 : reader.GetDecimal("AverageRating"),
                     ServiceType = reader.GetString("ServiceType"),
                     SourceId = reader.GetGuid("SourceId"),
                     ReviewCount = reader.GetInt32("ReviewCount"),
-                    AverageRevenuePerBooking = reader.GetDecimal("AverageRevenuePerBooking")
+                    AverageRevenuePerBooking = reader.GetDecimal("AverageRevenuePerBooking"),
+                    PreviousBookingCount = reader.GetInt32("PreviousBookingCount"),
+                    PreviousTotalRevenue = reader.GetDecimal("PreviousTotalRevenue"),
+                    PreviousAverageRating = reader.IsDBNull("PreviousAverageRating") ? 0 : reader.GetDecimal("PreviousAverageRating"),
+                    BookingCountChangePercent = reader.GetDecimal("BookingCountChangePercent"),
+                    RevenueChangePercent = reader.GetDecimal("RevenueChangePercent"),
+                    RatingChangePoints = reader.IsDBNull("RatingChangePoints") ? 0 : reader.GetDecimal("RatingChangePoints"),
+                    BookingCountChange = reader.GetInt32("BookingCountChange"),
+                    RevenueChange = reader.GetDecimal("RevenueChange"),
+                    TrendStatus = reader.GetString("TrendStatus")
                 };
 
                 services.Add(service);

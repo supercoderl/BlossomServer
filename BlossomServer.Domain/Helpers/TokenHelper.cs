@@ -37,7 +37,7 @@ namespace BlossomServer.Domain.Helpers
                 tokenSettings.Issuer,
                 tokenSettings.Audience,
                 claims,
-                expires: DateTime.Now.AddMinutes(_expiryDurationMinutes),
+                expires: DateTime.Now.AddMinutes(user.Role == Enums.UserRole.Guest ? 5 : _expiryDurationMinutes),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);

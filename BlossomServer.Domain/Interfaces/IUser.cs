@@ -1,4 +1,5 @@
-﻿using System;
+﻿using BlossomServer.Domain.Enums;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -11,5 +12,6 @@ namespace BlossomServer.Domain.Interfaces
         string Name { get; }
         Guid GetUserId();
         string GetUserEmail();
+        UserRole GetUserRole();
     }
 }

@@ -1,4 +1,5 @@
 ﻿using BlossomServer.Domain.Entities;
+using BlossomServer.Domain.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -14,6 +15,11 @@ namespace BlossomServer.Application.ViewModels.Notifications
         public string Title { get; set; } = string.Empty;
         public string Message { get; set; } = string.Empty;
         public bool IsRead { get; set; }
+        public NotificationType NotificationType { get; set; }
+        public int Priority { get; set; }
+        public DateTime? ExpiresAt { get; set; }
+        public string? ActionUrl { get; set; }
+        public Guid? RelatedEntityId { get; set; }
         public DateTime CreatedAt { get; set; }
 
         public static NotificationViewModel FromNotification(Notification notification)
@@ -25,6 +31,11 @@ namespace BlossomServer.Application.ViewModels.Notifications
                 Title = notification.Title,
                 Message = notification.Message,
                 IsRead = notification.IsRead,
+                NotificationType = notification.NotificationType,
+                Priority = notification.Priority,
+                ExpiresAt = notification.ExpiresAt,
+                ActionUrl = notification.ActionUrl,
+                RelatedEntityId = notification.RelatedEntityId,
                 CreatedAt = notification.CreatedAt
             };
         }

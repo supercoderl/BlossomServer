@@ -1,4 +1,5 @@
-﻿using BlossomServer.Domain.Interfaces;
+﻿using BlossomServer.Domain.Enums;
+using BlossomServer.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using System.Security.Claims;
 
@@ -26,6 +27,19 @@ namespace BlossomServer.Domain
             }
 
             return string.Empty;
+        }
+
+        public UserRole GetUserRole()
+        {
+            var claim = _httpContextAccessor.HttpContext?.User.Claims
+                .FirstOrDefault(x => string.Equals(x.Type, ClaimTypes.Role));
+
+            if (Enum.TryParse(claim?.Value, out UserRole userRole))
+            {
+                return userRole;
+            }
+
+            return UserRole.Guest;
         }
 
         public Guid GetUserId()

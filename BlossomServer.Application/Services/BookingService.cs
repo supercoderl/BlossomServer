@@ -2,6 +2,7 @@
 using BlossomServer.Application.Queries.Bookings.GetAll;
 using BlossomServer.Application.Queries.Bookings.GetAllTimeSlotForTechnician;
 using BlossomServer.Application.Queries.Bookings.GetById;
+using BlossomServer.Application.Queries.Bookings.GetScheduleByDate;
 using BlossomServer.Application.ViewModels;
 using BlossomServer.Application.ViewModels.Bookings;
 using BlossomServer.Application.ViewModels.Sorting;
@@ -60,6 +61,11 @@ namespace BlossomServer.Application.Services
         public async Task<BookingViewModel?> GetBookingByBookingIdAsync(Guid bookingId)
         {
             return await _bus.QueryAsync(new GetBookingByIdQuery(bookingId));
+        }
+
+        public async Task<IEnumerable<object>> GetScheduleByDateAsync(string date)
+        {
+            return await _bus.QueryAsync(new GetScheduleByDateQuery(date));
         }
 
         public async Task UpdateBookingStatusAsync(UpdateBookingStatusViewModel booking)

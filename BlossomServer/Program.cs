@@ -112,6 +112,7 @@ builder.Services.AddMassTransit(x =>
     x.AddConsumer<CreateFileUploadedEventConsumer>();
     x.AddConsumer<DeleteOldFileUploadedEventConsumer>();
     x.AddConsumer<SendEmailReminderConsumer>();
+    x.AddConsumer<NotificationRequiredEventConsumer>();
     x.AddConsumer<EmailConsumer>();
 
     x.UsingRabbitMq((context, cfg) =>
@@ -167,6 +168,11 @@ builder.Services.AddMassTransit(x =>
         cfg.ReceiveEndpoint("blossom-server-delete-file", e =>
         {
             e.ConfigureConsumer<DeleteOldFileUploadedEventConsumer>(context);
+            e.DiscardSkippedMessages();
+        });
+        cfg.ReceiveEndpoint("blossom-server-create-notification", e =>
+        {
+            e.ConfigureConsumer<NotificationRequiredEventConsumer>(context);
             e.DiscardSkippedMessages();
         });
         cfg.ReceiveEndpoint("blossom-server-email-reminder", e =>

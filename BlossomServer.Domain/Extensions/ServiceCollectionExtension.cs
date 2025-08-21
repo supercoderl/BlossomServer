@@ -50,6 +50,7 @@ using BlossomServer.Domain.Commands.Users.ChangePassword;
 using BlossomServer.Domain.Commands.Users.CreateUser;
 using BlossomServer.Domain.Commands.Users.DeleteUser;
 using BlossomServer.Domain.Commands.Users.ForgotPassword;
+using BlossomServer.Domain.Commands.Users.GenerateGuestToken;
 using BlossomServer.Domain.Commands.Users.Login;
 using BlossomServer.Domain.Commands.Users.RefreshToken;
 using BlossomServer.Domain.Commands.Users.ResetPassword;
@@ -82,6 +83,7 @@ namespace BlossomServer.Domain.Extensions
             services.AddScoped<IRequestHandler<RefreshTokenCommand, object>, RefreshTokenCommandHandler>();
             services.AddScoped<IRequestHandler<ForgotPasswordCommand>, ForgotPasswordCommandHandler>();
             services.AddScoped<IRequestHandler<ResetPasswordCommand>, ResetPasswordCommandHandler>();
+            services.AddScoped<IRequestHandler<GenerateGuestTokenCommand, string>, GenerateGuestTokenCommandHandler>();
 
             // Booking
             services.AddScoped<IRequestHandler<CreateBookingCommand>, CreateBookingCommandHandler>();
@@ -179,6 +181,9 @@ namespace BlossomServer.Domain.Extensions
             services.AddScoped<IRequestHandler<AddReminderCommand>, AddReminderCommandHandler>();
             services.AddScoped<IRequestHandler<UpdateReminderCommand>, UpdateReminderCommandHandler>();
             services.AddScoped<IRequestHandler<UpdateReminderStatusCommand>, UpdateReminderStatusCommandHandler>();
+
+            // Notification
+            services.AddScoped<IRequestHandler<CreateNotificationCommand>, CreateNotificationCommandHandler>();
 
             return services;
         }
