@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using BlossomServer.Domain.Commands.Files.UploadFile;
+using BlossomServer.SharedKernel.Utils;
 
 namespace BlossomServer.Domain.Commands.Users.UpdateUser
 {
@@ -61,7 +62,7 @@ namespace BlossomServer.Domain.Commands.Users.UpdateUser
                 }
             }
 
-            user.SetEmail(request.Email);
+            user.SetEmail(TextHelper.NomalizeGmail(request.Email));
             user.SetFirstName(request.FirstName);
             user.SetLastName(request.LastName);
             user.SetPhoneNumber(request.PhoneNumber);

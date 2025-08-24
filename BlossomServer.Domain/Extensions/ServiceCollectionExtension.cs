@@ -54,6 +54,8 @@ using BlossomServer.Domain.Commands.Users.GenerateGuestToken;
 using BlossomServer.Domain.Commands.Users.Login;
 using BlossomServer.Domain.Commands.Users.RefreshToken;
 using BlossomServer.Domain.Commands.Users.ResetPassword;
+using BlossomServer.Domain.Commands.Users.Revoke;
+using BlossomServer.Domain.Commands.Users.SocialLogin;
 using BlossomServer.Domain.Commands.Users.UpdateUser;
 using BlossomServer.Domain.Commands.WorkSchedules.CreateWorkSchedule;
 using BlossomServer.Domain.Commands.WorkSchedules.DeleteWorkSchedule;
@@ -84,6 +86,8 @@ namespace BlossomServer.Domain.Extensions
             services.AddScoped<IRequestHandler<ForgotPasswordCommand>, ForgotPasswordCommandHandler>();
             services.AddScoped<IRequestHandler<ResetPasswordCommand>, ResetPasswordCommandHandler>();
             services.AddScoped<IRequestHandler<GenerateGuestTokenCommand, string>, GenerateGuestTokenCommandHandler>();
+            services.AddScoped<IRequestHandler<SocialLoginCommand, object>, SocialLoginCommandHandler>();   
+            services.AddScoped<IRequestHandler<RevokeCommand>, RevokeCommandHandler>();
 
             // Booking
             services.AddScoped<IRequestHandler<CreateBookingCommand>, CreateBookingCommandHandler>();

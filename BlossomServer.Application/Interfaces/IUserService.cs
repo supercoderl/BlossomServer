@@ -22,10 +22,12 @@ namespace BlossomServer.Application.Interfaces
         public Task UpdateUserAsync(UpdateUserViewModel user);
         public Task DeleteUserAsync(Guid userId);
         public Task ChangePasswordAsync(ChangePasswordViewModel viewModel);
-        public Task<object> LoginUserAsync(LoginUserViewModel viewModel);
+        public Task<LoginResponse> LoginUserAsync(LoginUserViewModel viewModel);
         public Task<object> RefreshTokenAsync(RefreshTokenViewModel viewModel);
         public Task<Guid> ForgotPasswordAsync(ForgotPasswordViewModel viewModel);
         public Task ResetPasswordAsync(ResetPasswordViewModel viewModel);
         public Task<string> GenerateGuestTokenAsync(string clientId, string userAgent);
+        public Task<LoginResponse> SocialLoginAsync(string provider, string code);
+        public Task LogoutAsync(string refreshToken);
     }
 }

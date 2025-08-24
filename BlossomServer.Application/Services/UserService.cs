@@ -12,9 +12,12 @@ using BlossomServer.Domain.Commands.Users.GenerateGuestToken;
 using BlossomServer.Domain.Commands.Users.Login;
 using BlossomServer.Domain.Commands.Users.RefreshToken;
 using BlossomServer.Domain.Commands.Users.ResetPassword;
+using BlossomServer.Domain.Commands.Users.Revoke;
+using BlossomServer.Domain.Commands.Users.SocialLogin;
 using BlossomServer.Domain.Commands.Users.UpdateUser;
 using BlossomServer.Domain.Enums;
 using BlossomServer.Domain.Interfaces;
+using System.Text.Json;
 
 namespace BlossomServer.Application.Services
 {
@@ -99,9 +102,10 @@ namespace BlossomServer.Application.Services
             await _bus.SendCommandAsync(new ChangePasswordCommand(viewModel.OldPassword, viewModel.NewPassword));
         }
 
-        public async Task<object> LoginUserAsync(LoginUserViewModel viewModel)
+        public async Task<LoginResponse> LoginUserAsync(LoginUserViewModel viewModel)
         {
-            return await _bus.QueryAsync(new LoginUserCommand(viewModel.Identifier, viewModel.Password));
+            object result = await _bus.QueryAsync(new LoginUserCommand(viewModel.Identifier, viewModel.Password));
+            return MapToLoginResponse(result);
         }
 
         public async Task<object> RefreshTokenAsync(RefreshTokenViewModel viewModel)
@@ -126,6 +130,51 @@ namespace BlossomServer.Application.Services
         public async Task<string> GenerateGuestTokenAsync(string clientId, string userAgent)
         {
             return await _bus.QueryAsync(new GenerateGuestTokenCommand(clientId, userAgent));
+        }
+
+        public async Task<LoginResponse> SocialLoginAsync(string provider, string code)
+        {
+            object result = await _bus.QueryAsync(new SocialLoginCommand(code, provider));
+            return MapToLoginResponse(result);
+        }
+
+        private LoginResponse MapToLoginResponse(object result)
+        {
+            if (result == null)
+            {
+                return LoginResponse.Empty();
+            }
+
+            try
+            {
+                // Convert to JSON string then deserialize to our application layer DTO
+                var json = JsonSerializer.Serialize(result);
+                var loginData = JsonSerializer.Deserialize<LoginResponse>(json, new JsonSerializerOptions
+                {
+                    PropertyNameCaseInsensitive = true
+                });
+
+                // Check if login was successful (has AccessToken)
+                if (string.IsNullOrEmpty(loginData?.AccessToken.Value))
+                {
+                    return LoginResponse.Empty();
+                }
+
+                return new LoginResponse
+                {
+                    AccessToken = loginData.AccessToken,
+                    RefreshToken = loginData.RefreshToken
+                };
+            }
+            catch
+            {
+                return LoginResponse.Empty();
+            }
+        }
+
+        public async Task LogoutAsync(string refreshToken)
+        {
+            await _bus.SendCommandAsync(new RevokeCommand(refreshToken));
         }
     }
 }

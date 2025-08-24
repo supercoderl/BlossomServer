@@ -9,7 +9,7 @@ using System.Security.Claims;
 
 namespace BlossomServer.Application.Hubs
 {
-    [Authorize]
+    [Authorize(Policy = "AllowGuests")]
     public sealed class TrackerHub : Hub
     {
         private readonly IMediatorHandler _bus;
@@ -218,6 +218,19 @@ namespace BlossomServer.Application.Hubs
             await base.OnDisconnectedAsync(exception); // Fixed: Removed Task<Task> return type and added await
         }
 
+        private bool IsGuestConnection()
+        {
+            var httpContext = Context.GetHttpContext();
+            if (httpContext != null)
+            {
+                return httpContext.Request.Query.ContainsKey("isGuest") ||
+                       httpContext.Request.Headers.ContainsKey("X-Guest-Access") ||
+                       !Context.User?.Identity?.IsAuthenticated == true;
+            }
+
+            return !Context.User?.Identity?.IsAuthenticated == true;
+        }
+
         private string GetDevice()
         {
             var device = Context.GetHttpContext()?.Request.Headers["Device"].ToString();
@@ -237,7 +250,11 @@ namespace BlossomServer.Application.Hubs
 
         public async Task JoinDashboardGroup(Domain.Enums.UserRole role)
         {
-            await Groups.AddToGroupAsync(Context.ConnectionId, role.ToString());
+            // Only allow authenticated users to join dashboard groups
+            if (!IsGuestConnection())
+            {
+                await Groups.AddToGroupAsync(Context.ConnectionId, role.ToString());
+            }
         }
 
         public async Task LeaveDashboardGroup(Domain.Enums.UserRole role)

@@ -1,6 +1,7 @@
 ﻿using BlossomServer.Domain.Settings;
 using BlossomServer.Swagger;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using System.Text;
@@ -57,17 +58,47 @@ namespace BlossomServer.Extensions
             return services;
         }
 
+        // CSRF Protection
+        public static IServiceCollection AddCSRFProtection(this IServiceCollection services, IWebHostEnvironment env)
+        {
+            services.AddAntiforgery(options =>
+            {
+                options.HeaderName = "X-XSRF-TOKEN";
+                options.Cookie.Name = "XSRF-TOKEN";
+
+                options.Cookie.HttpOnly = true;
+
+                options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+                options.Cookie.SameSite = SameSiteMode.None;
+            });
+
+            return services;
+        }
+
         public static IServiceCollection AddAuth(this IServiceCollection services, IConfiguration configuration)
         {
             services.AddHttpContextAccessor();
 
             services.AddAuthentication(
-                    options => { options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
+                options => { options.DefaultScheme = JwtBearerDefaults.AuthenticationScheme; })
                 .AddJwtBearer(
                     jwtOptions =>
                     {
                         jwtOptions.TokenValidationParameters = CreateTokenValidationParameters(configuration);
+                        jwtOptions.Events = CreateBearerEvents(configuration);
+                    }
+                );
+
+            services.AddScoped<IAuthorizationHandler, GuestOrAuthenticatedHandler>();
+
+            services.AddAuthorization(
+                options =>
+                {
+                    options.AddPolicy("AllowGuests", policy =>
+                    {
+                        policy.Requirements.Add(new GuestOrAuthenticatedRequirement());
                     });
+                });
 
             services
                 .AddOptions<TokenSettings>()
@@ -91,6 +122,24 @@ namespace BlossomServer.Extensions
                     Encoding.UTF8.GetBytes(
                         configuration["Auth:Secret"]!)),
                 RequireSignedTokens = false
+            };
+
+            return result;
+        }
+
+        public static JwtBearerEvents CreateBearerEvents(IConfiguration configuration)
+        {
+            var result = new JwtBearerEvents
+            {
+                OnMessageReceived = context =>
+                {
+                    // Try to get token from cookie first
+                    if (context.Request.Cookies.ContainsKey("access_token"))
+                    {
+                        context.Token = context.Request.Cookies["access_token"];
+                    }
+                    return Task.CompletedTask;
+                }
             };
 
             return result;

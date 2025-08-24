@@ -2,9 +2,11 @@
 using BlossomServer.Domain.Enums;
 using BlossomServer.Domain.Interfaces.Repositories;
 using BlossomServer.Infrastructure.Database;
+using BlossomServer.SharedKernel.Utils;
 using Microsoft.Data.SqlClient;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
+using SendGrid.Helpers.Mail;
 using System.Data;
 using System.Data.SqlTypes;
 using System.Text;
@@ -93,7 +95,13 @@ namespace BlossomServer.Infrastructure.Repositories
 
         public async Task<User?> GetUserByIdentifierAsync(string identifier)
         {
-            return await DbSet.SingleOrDefaultAsync(u => u.Email.Equals(identifier));
+            var parameter = new SqlParameter("@NormalizedEmail", TextHelper.NomalizeGmail(identifier));
+
+            var result = await DbSet
+                .FromSqlRaw("EXEC sp_getUserByIdentifier @NormalizedEmail", parameter)
+                .ToListAsync();
+
+            return result.FirstOrDefault();
         }
     }
 }

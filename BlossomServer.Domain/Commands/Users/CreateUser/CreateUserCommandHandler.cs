@@ -7,6 +7,7 @@ using MediatR;
 using BC = BCrypt.Net.BCrypt;
 using BlossomServer.Shared.Events.User;
 using BlossomServer.Domain.Commands.Technicians.CreateTechnician;
+using BlossomServer.SharedKernel.Utils;
 
 namespace BlossomServer.Domain.Commands.Users.CreateUser
 {
@@ -63,7 +64,7 @@ namespace BlossomServer.Domain.Commands.Users.CreateUser
                 passwordHash,
                 request.FirstName,
                 request.LastName,
-                request.Email,
+                TextHelper.NomalizeGmail(request.Email),
                 request.PhoneNumber,
                 request.AvatarUrl,
                 request.CoverPhotoUrl,

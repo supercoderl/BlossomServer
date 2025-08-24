@@ -65,7 +65,7 @@ namespace BlossomServer.Domain.Commands.Users.Login
             user.SetActive();
             user.SetLastLoggedIn(TimeZoneHelper.ConvertUtcToLocal(DateTimeOffset.Now, TimeZoneInfo.FindSystemTimeZoneById("SE Asia Standard Time")));
 
-            var refreshToken = await TokenHelper.GenerateRefreshToken(user.Id, Bus);
+            var refreshToken = await TokenHelper.GenerateRefreshToken(user.Id, Bus, _tokenSettings);
 
             if (!await CommitAsync())
             {
@@ -74,17 +74,15 @@ namespace BlossomServer.Domain.Commands.Users.Login
 
             return new
             {
-                AccessToken = TokenHelper.BuildToken(user, _tokenSettings),
-                RefreshToken = refreshToken,
-                UserInfo = new
+                AccessToken = new
                 {
-                    id = user.Id,
-                    email = user.Email,
-                    fullName = user.FullName,
-                    phoneNumber = user.PhoneNumber,
-                    role = user.Role.ToString(),
-                    avatarUrl = user.AvatarUrl,
-                    lastLogin = user.LastLoggedinDate
+                    Value = TokenHelper.BuildToken(user, _tokenSettings),
+                    Exp = _tokenSettings.ExpiryDurationMinutes
+                },
+                RefreshToken = new
+                {
+                    Vlue = refreshToken,
+                    Exp = _tokenSettings.ExpiryDurationDays
                 }
             };
         }

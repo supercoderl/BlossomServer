@@ -13,6 +13,8 @@ using BlossomServer.Infrastructure.Database;
 using BlossomServer.Infrastructure.Extensions;
 using BlossomServer.Middlewares;
 using BlossomServer.ServiceDefaults;
+using BlossomServer.SharedKernel.Models;
+using BlossomServer.SharedKernel.Utils;
 using Hangfire;
 using HealthChecks.ApplicationStatus.DependencyInjection;
 using HealthChecks.UI.Client;
@@ -84,6 +86,7 @@ builder.Services.AddCors(options =>
 
 builder.Services.AddSwagger();
 builder.Services.AddAuth(builder.Configuration);
+builder.Services.AddCSRFProtection(builder.Environment);
 builder.Services.AddInfrastructure("BlossomServer.Infrastructure", dbConnectionString!);
 builder.Services.AddQueryHandlers();
 builder.Services.AddServices();
@@ -92,6 +95,7 @@ builder.Services.AddCommandHandlers();
 builder.Services.AddNotificationHandlers();
 builder.Services.AddApiUser();
 builder.Services.AddHttpClient();
+builder.Services.AddScoped<OAuthHelper>();
 builder.Services.AddNotificationHandlersApplication();
 builder.Services.AddSettings<BunnyCDNSettings>(builder.Configuration, "BunnyCDN");
 builder.Services.AddSettings<ImageKitSettings>(builder.Configuration, "ImageKit");
@@ -99,6 +103,8 @@ builder.Services.AddSettings<GroqSettings>(builder.Configuration, "Groq");
 builder.Services.AddSettings<TwillioSettings>(builder.Configuration, "Twillio");
 builder.Services.AddSettings<MailSettings>(builder.Configuration, "EmailConfiguration");
 builder.Services.AddSettings<ClientSettings>(builder.Configuration, "Client");
+builder.Services.Configure<Dictionary<string, OAuthProviderOptions>>(
+    builder.Configuration.GetSection("OAuthProviders"));
 builder.Services.AddBackground();
 builder.Services.AddTriggerBasedAuditing();
 builder.Services.AddHangfire(builder.Configuration);
@@ -270,7 +276,7 @@ app.UseRouting();
 app.UseStaticFiles();
 app.UseAuthentication();
 app.UseAuthorization();
-
+app.UseAntiforgery();
 app.UseMiniProfiler();
 
 if (builder.Environment.IsProduction())

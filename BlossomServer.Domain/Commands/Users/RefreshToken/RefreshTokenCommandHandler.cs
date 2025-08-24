@@ -77,7 +77,7 @@ namespace BlossomServer.Domain.Commands.Users.RefreshToken
 
             await CommitAsync();
 
-            var newRefreshToken = await TokenHelper.GenerateRefreshToken(user.Id, Bus);
+            var newRefreshToken = await TokenHelper.GenerateRefreshToken(user.Id, Bus, _tokenSettings);
 
             return new
             {

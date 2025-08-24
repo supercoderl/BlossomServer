@@ -13,9 +13,6 @@ namespace BlossomServer.Domain.Helpers
 {
     public static class TokenHelper
     {
-        private const double _expiryDurationMinutes = 60;
-        private const double _expiryDurationDays = 45;
-
         public static string BuildToken(User user, TokenSettings tokenSettings)
         {
             var claims = new[]
@@ -37,13 +34,13 @@ namespace BlossomServer.Domain.Helpers
                 tokenSettings.Issuer,
                 tokenSettings.Audience,
                 claims,
-                expires: DateTime.Now.AddMinutes(user.Role == Enums.UserRole.Guest ? 5 : _expiryDurationMinutes),
+                expires: DateTime.Now.AddMinutes(user.Role == Enums.UserRole.Guest ? 5 : tokenSettings.ExpiryDurationMinutes),
                 signingCredentials: credentials);
 
             return new JwtSecurityTokenHandler().WriteToken(tokenDescriptor);
         }
 
-        public static async Task<string> GenerateRefreshToken(Guid userId, IMediatorHandler bus)
+        public static async Task<string> GenerateRefreshToken(Guid userId, IMediatorHandler bus, TokenSettings tokenSettings)
         {
             var randomNumber = new Byte[32];
             var randomNumberGenerator = RandomNumberGenerator.Create();
@@ -55,7 +52,7 @@ namespace BlossomServer.Domain.Helpers
                Guid.NewGuid(),
                userId,
                token,
-               TimeZoneHelper.GetLocalTimeNow().AddDays(_expiryDurationDays)
+               TimeZoneHelper.GetLocalTimeNow().AddDays(tokenSettings.ExpiryDurationDays)
             ));
 
             return token;
