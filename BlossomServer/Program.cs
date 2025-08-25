@@ -4,6 +4,7 @@ using BlossomServer.Application.Extensions;
 using BlossomServer.Application.gRPC;
 using BlossomServer.Application.Hubs;
 using BlossomServer.Domain.Consumers;
+using BlossomServer.Domain.Entities;
 using BlossomServer.Domain.Extensions;
 using BlossomServer.Domain.Interfaces.BackgroundServices;
 using BlossomServer.Domain.Settings;
@@ -37,6 +38,13 @@ builder.Services.AddEndpointsApiExplorer();
 if (builder.Environment.IsProduction())
 {
     builder.Services.AddZenFirewall();
+
+    builder.Services.ConfigureApplicationCookie(options =>
+    {
+        options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
+        options.Cookie.HttpOnly = true;
+        options.Cookie.SameSite = SameSiteMode.None;
+    });
 }
 
 var isAspire = builder.Configuration["ASPIRE_ENABLED"] == "true";
