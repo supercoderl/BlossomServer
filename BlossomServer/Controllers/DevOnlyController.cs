@@ -66,5 +66,29 @@ namespace BlossomServer.Controllers
             var result = TrackerHub.GetConnections();
             return Response(result);
         }
+
+        [HttpPost("test-cookie")]
+        public IActionResult TestCookie()
+        {
+            HttpContext.Response.Cookies.Append("test_cookie", "test_value", new CookieOptions
+            {
+                HttpOnly = true,
+                Secure = true,
+                SameSite = SameSiteMode.Lax,
+                Path = "/",
+                Expires = DateTimeOffset.UtcNow.AddHours(1)
+            });
+
+            return Ok("Cookie set");
+        }
+
+        [HttpGet("read-cookie")]
+        public IActionResult ReadCookie()
+        {
+            var testCookie = Request.Cookies["test_cookie"];
+            var accessToken = Request.Cookies["access_token"];
+
+            return Ok(new { testCookie, accessToken });
+        }
     }
 }
