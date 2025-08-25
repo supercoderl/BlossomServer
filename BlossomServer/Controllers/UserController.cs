@@ -219,7 +219,7 @@ namespace BlossomServer.Controllers
                 HttpOnly = true,
                 Secure = true,
                 SameSite = SameSiteMode.None,
-                Expires = key == "access_token" ? TimeZoneHelper.GetLocalTimeNow().AddMinutes(token.Exp) : TimeZoneHelper.GetLocalTimeNow().AddDays(token.Exp), // Short expiration for token
+                Expires = key == "access_token" ? DateTime.UtcNow.AddMinutes(15) : DateTime.UtcNow.AddDays(45), // Short expiration for token
                 Path = key == "access_token" ? "/" : "/api/v1/User/rt",
                 Domain = null
             };
